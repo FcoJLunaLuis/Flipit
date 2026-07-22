@@ -65,14 +65,23 @@ namespace Flipit.Dialogue
 
         /// <summary>
         /// Called by the Input System when the Interact action is performed.
-        /// Checks for a valid target and Idle state, then starts dialogue.
+        /// Compatible with PlayerInput in SendMessages mode (receives InputValue).
         /// </summary>
-        /// <param name="context">The input action callback context.</param>
-        public void OnInteract(InputAction.CallbackContext context)
+        public void OnInteract(InputValue value)
         {
-            if (!context.performed)
-                return;
+            HandleInteract();
+        }
 
+        /// <summary>
+        /// Overload without parameters for SendMessages compatibility.
+        /// </summary>
+        public void OnInteract()
+        {
+            HandleInteract();
+        }
+
+        private void HandleInteract()
+        {
             if (CurrentTarget == null)
                 return;
 

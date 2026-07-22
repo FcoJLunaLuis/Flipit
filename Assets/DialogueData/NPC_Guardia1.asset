@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
   speakerName: Guardia
   lines:
-  - text: Bienvenido a la ciudad, viajero.
-    options: []
-  - text: Esperamos que disfrutes tu estancia aqui.
+  - text: Hola bienvenido al rancho las morismas de bracho
     options: []

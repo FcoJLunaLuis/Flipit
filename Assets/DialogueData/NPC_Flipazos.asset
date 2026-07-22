@@ -14,17 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
   speakerName: Compadre
   lines:
-  - text: Que quiere compa?
-    options: []
-  - text: Unos flipazos?
+  - text: Que roio morro unos flipazos?
     options:
-    - displayText: Si, dame unos!
+    - displayText: Si
+      requiredEventId: 
+      targetLineIndex: 1
+    - displayText: No
       requiredEventId: 
       targetLineIndex: 2
-    - displayText: No gracias, estoy bien.
-      requiredEventId: 
-      targetLineIndex: 3
-  - text: Orale! Aqui tienes tus flipazos. Provecho!
+  - text: Orale! Aqui tienes.
     options: []
-  - text: Va pues, cuando quieras regresas compa.
+  - text: Camara pues morro
     options: []

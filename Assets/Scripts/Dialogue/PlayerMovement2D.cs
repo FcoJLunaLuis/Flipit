@@ -22,9 +22,9 @@ namespace Flipit.Dialogue
             _rb.freezeRotation = true;
         }
 
-        public void OnMove(InputAction.CallbackContext context)
+        public void OnMove(InputValue value)
         {
-            _moveInput = context.ReadValue<Vector2>();
+            _moveInput = value.Get<Vector2>();
         }
 
         private void FixedUpdate()

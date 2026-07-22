@@ -6,6 +6,7 @@ namespace Flipit.Dialogue
     /// <summary>
     /// Simple top-down 2D player movement using the new Input System.
     /// Reads the Move action from the Player action map and applies velocity to a Rigidbody2D.
+    /// Compatible with PlayerInput in SendMessages mode.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
     public class TopDownPlayerMovement : MonoBehaviour
@@ -27,10 +28,11 @@ namespace Flipit.Dialogue
 
         /// <summary>
         /// Called by PlayerInput component via SendMessages for the Move action.
+        /// SendMessages mode passes InputValue, not CallbackContext.
         /// </summary>
-        public void OnMove(InputAction.CallbackContext context)
+        public void OnMove(InputValue value)
         {
-            _moveInput = context.ReadValue<Vector2>();
+            _moveInput = value.Get<Vector2>();
         }
     }
 }

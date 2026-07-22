@@ -14,7 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
   speakerName: Vendedor
   lines:
-  - text: Hola! Bienvenido a mi tienda.
-    options: []
-  - text: Quieres comprar chicharrines?
+  - text: Bienvenido al rancho las morismas de bracho, te gustaria comprar chicharrines?
+    options:
+    - displayText: Si
+      requiredEventId: 
+      targetLineIndex: 1
+    - displayText: No
+      requiredEventId: 
+      targetLineIndex: 99
+  - text: Que cantidad quieres?
+    options:
+    - displayText: $5
+      requiredEventId: 
+      targetLineIndex: 2
+    - displayText: $10
+      requiredEventId: 
+      targetLineIndex: 2
+    - displayText: $15
+      requiredEventId: 
+      targetLineIndex: 2
+  - text: Aqui tienes tus chicharrines! Provecho!
     options: []
