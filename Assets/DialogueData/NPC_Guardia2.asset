@@ -14,5 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
   speakerName: Anciano
   lines:
-  - text: Como estas? Bienvenido, espero que tu visita sea agradable
+  - text: Ah, un rostro nuevo por aqui!
+    options: []
+  - text: Esta ciudad es tranquila, te va a gustar.
+    options: []
+  - text: Si necesitas algo, no dudes en preguntar.
     options: []

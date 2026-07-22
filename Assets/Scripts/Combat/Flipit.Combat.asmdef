@@ -1,16 +1,13 @@
 {
-    "name": "Flipit.Dialogue.Editor",
-    "rootNamespace": "",
+    "name": "Flipit.Combat",
+    "rootNamespace": "Flipit.Combat",
     "references": [
         "Flipit.Dialogue",
-        "Flipit.Combat",
         "Unity.InputSystem",
         "Unity.TextMeshPro",
         "Unity.ugui"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

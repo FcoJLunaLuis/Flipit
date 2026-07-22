@@ -10,21 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16b1c8c67112dc340940882523becb44, type: 3}
-  m_Name: NPC_Flipazos
+  m_Name: CombatNPC_Retador1
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
-  speakerName: Compadre
+  speakerName: Retador
   lines:
-  - text: Que quiere compa?
-    options: []
-  - text: Unos flipazos?
+  - text: "\xA1Te reto a una partida de Flipit, Retador!"
     options:
-    - displayText: Si, dame unos!
+    - displayText: "\xA1Acepto!"
+      requiredEventId: 
+      targetLineIndex: 1
+    - displayText: No, gracias.
       requiredEventId: 
       targetLineIndex: 2
-    - displayText: No gracias, estoy bien.
-      requiredEventId: 
-      targetLineIndex: 3
-  - text: Orale! Aqui tienes tus flipazos. Provecho!
+  - text: '[COMBAT_ACCEPT]'
     options: []
-  - text: Va pues, cuando quieras regresas compa.
+  - text: '[COMBAT_REJECT]'
     options: []

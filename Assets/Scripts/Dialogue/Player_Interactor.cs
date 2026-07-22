@@ -88,13 +88,7 @@ namespace Flipit.Dialogue
             if (!CurrentTarget.HasValidDialogue)
                 return;
 
-            if (Dialogue_Manager.Instance == null)
-                return;
-
-            if (Dialogue_Manager.Instance.CurrentState != DialogueState.Idle)
-                return;
-
-            Dialogue_Manager.Instance.StartDialogue(CurrentTarget.DialogueData);
+            CurrentTarget.Interact();
         }
     }
 }
