@@ -209,7 +209,7 @@ public class PauseSystemCreator : Editor
         var albumComp = pauseMenuPanel.AddComponent<AlbumFichasButton>();
         var soAlbum = new SerializedObject(albumComp);
         soAlbum.FindProperty("albumButton").objectReferenceValue = btnAlbum;
-        soAlbum.FindProperty("parentTransform").objectReferenceValue = canvasObj.transform;
+        soAlbum.FindProperty("pauseMenuPanel").objectReferenceValue = pauseMenuPanel;
         soAlbum.FindProperty("feedbackText").objectReferenceValue = feedbackText;
         soAlbum.ApplyModifiedProperties();
 

@@ -103,23 +103,23 @@
 /// 
 /// AlbumFichasButton:
 ///   - Album Button → Btn_AlbumFichas
-///   - Album Fichas Prefab → (asignar después del merge)
-///   - Parent Transform → PauseCanvas
+///   - Pause Menu Panel → PauseMenuPanel
 ///   - Feedback Text → FeedbackText
 /// 
 /// ═══════════════════════════════════════════════════
 /// INTEGRACIÓN CON OTRAS BRANCHES:
 /// ═══════════════════════════════════════════════════
 /// 
-/// ALBUM DE FICHAS (post-merge):
-///   1. Hacer merge con la branch de Album de Fichas.
-///   2. Asignar el prefab del Álbum en AlbumFichasButton → albumFichasPrefab.
-///   3. Listo. El botón instanciará el prefab al presionarlo.
+/// ALBUM DE FICHAS (INTEGRADO):
+///   - AlbumManager debe existir en la escena como singleton.
+///   - El botón "Álbum de Fichas" llama a AlbumManager.Instance.AbrirAlbum().
+///   - Al cerrar el álbum, el evento OnAlbumCerrado reactiva el menú de pausa.
+///   - El PauseManager controla timeScale; el AlbumManager no lo toca.
 /// 
 /// SISTEMA DE GUARDADO (post-merge):
-///   1. Hacer merge con la branch de Album de Fichas (que contiene SaveSystem).
-///   2. En SaveAndQuitButton.cs, descomentar la lógica y conectar con SaveSystem.
-///   3. Implementar el flujo: Guardar → Cargar escena MainMenu.
+///   - SaveSystem ya existe (clase estática en Assets/Scripts/Save/).
+///   - Cuando el escenario de juego esté listo, conectar SaveAndQuitButton con SaveSystem.Guardar().
+///   - Implementar el flujo: Guardar → Cargar escena MainMenu.
 /// 
 /// SISTEMA DE DINERO (cuando esté listo):
 ///   1. Crear una clase que implemente IPlayerDataProvider.

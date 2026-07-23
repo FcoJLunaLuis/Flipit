@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,8 +27,11 @@ public class AlbumManager : MonoBehaviour
     private int paginaActual = 0;
     private bool albumAbierto = false;
 
-    // Input del Player para desactivar cuando el álbum está abierto
-    private InputActionMap playerActionMap;
+    /// <summary>
+    /// Evento que se dispara cuando el álbum se cierra.
+    /// El menú de pausa lo usa para reactivarse.
+    /// </summary>
+    public event Action OnAlbumCerrado;
 
     public static AlbumManager Instance { get; private set; }
 
@@ -50,12 +54,6 @@ public class AlbumManager : MonoBehaviour
     {
         // Cargar datos guardados
         CargarDatos();
-
-        // Obtener Player action map para desactivarlo cuando se abre el álbum
-        if (inputActions != null)
-        {
-            playerActionMap = inputActions.FindActionMap("Player");
-        }
 
         // Suscribirse a eventos de input
         inputHandler.OnNavigate += HandleNavigate;
@@ -85,7 +83,8 @@ public class AlbumManager : MonoBehaviour
     // ===== API PÚBLICA =====
 
     /// <summary>
-    /// Abre el álbum. Activa la UI y el input del álbum, desactiva el input del jugador.
+    /// Abre el álbum. Activa la UI y el input del álbum.
+    /// Se llama exclusivamente desde el menú de pausa (timeScale ya está en 0).
     /// </summary>
     public void AbrirAlbum()
     {
@@ -93,9 +92,6 @@ public class AlbumManager : MonoBehaviour
 
         albumAbierto = true;
         paginaActual = 0;
-
-        // Desactivar input del jugador
-        playerActionMap?.Disable();
 
         // Activar input del álbum
         inputHandler.Activar();
@@ -107,14 +103,12 @@ public class AlbumManager : MonoBehaviour
             ActualizarUI();
         }
 
-        // Pausar el juego
-        Time.timeScale = 0f;
-
         Debug.Log("[AlbumManager] Álbum abierto.");
     }
 
     /// <summary>
-    /// Cierra el álbum. Desactiva la UI y el input del álbum, reactiva el input del jugador.
+    /// Cierra el álbum. Desactiva la UI y el input del álbum.
+    /// El PauseManager se encarga de timeScale al cerrar el menú de pausa.
     /// </summary>
     public void CerrarAlbum()
     {
@@ -129,14 +123,11 @@ public class AlbumManager : MonoBehaviour
         if (albumUI != null)
             albumUI.Ocultar();
 
-        // Reactivar input del jugador
-        playerActionMap?.Enable();
-
-        // Reanudar el juego
-        Time.timeScale = 1f;
-
         // Guardar datos al cerrar
         GuardarDatos();
+
+        // Notificar que el álbum se cerró (el menú de pausa se reactiva)
+        OnAlbumCerrado?.Invoke();
 
         Debug.Log("[AlbumManager] Álbum cerrado. Datos guardados.");
     }
@@ -301,9 +292,6 @@ public class AlbumManager : MonoBehaviour
             inputHandler.OnClose -= HandleClose;
             inputHandler.OnSelect -= HandleSelect;
         }
-
-        // Asegurarse de que el tiempo vuelva a la normalidad
-        Time.timeScale = 1f;
     }
 
     void OnApplicationQuit()
