@@ -14,6 +14,11 @@ namespace Flipit.Combat
 
         private Coroutine _transitionCoroutine;
 
+        private void Awake()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+
         public void ShowTransition(string sceneName, Action onComplete, Action onError)
         {
             if (_overlayCanvas != null) _overlayCanvas.enabled = true;

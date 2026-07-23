@@ -34,10 +34,10 @@ public static class CombatSceneBuilder
         // Ground
         var ground = new GameObject("Ground");
         var gsr = ground.AddComponent<SpriteRenderer>();
-        gsr.sprite = MakeSprite();
-        gsr.color = new Color(0.25f, 0.4f, 0.25f);
+        gsr.sprite = LoadSprite("Assets/Sprites/Ground.png") ?? MakeSprite();
+        gsr.color = Color.white;
         gsr.sortingOrder = -10;
-        ground.transform.localScale = new Vector3(30f, 24f, 1f);
+        ground.transform.localScale = new Vector3(15f, 12f, 1f);
 
         // Walls
         MakeWall("Wall_Top", new Vector3(0,12,0), new Vector2(30,1));
@@ -118,8 +118,8 @@ public static class CombatSceneBuilder
     {
         var p = new GameObject("Player"); p.tag = "Player";
         p.transform.position = new Vector3(0,-2,0);
-        var sr = p.AddComponent<SpriteRenderer>(); sr.sprite = MakeSprite(); sr.color = Color.cyan; sr.sortingOrder = 5;
-        p.transform.localScale = new Vector3(0.8f,0.8f,1f);
+        var sr = p.AddComponent<SpriteRenderer>(); sr.sprite = LoadSprite("Assets/Sprites/Player.png"); sr.color = Color.white; sr.sortingOrder = 5;
+        p.transform.localScale = new Vector3(1.5f,1.5f,1f);
         var rb = p.AddComponent<Rigidbody2D>(); rb.gravityScale = 0; rb.freezeRotation = true;
         p.AddComponent<BoxCollider2D>().size = Vector2.one;
         p.AddComponent<TopDownPlayerMovement>();
@@ -135,9 +135,10 @@ public static class CombatSceneBuilder
     static void MakeNPC(string name, Vector3 pos, Color col, DialogueData data, string scene, string display)
     {
         var n = new GameObject(name); n.transform.position = pos;
-        var sr = n.AddComponent<SpriteRenderer>(); sr.sprite = MakeSprite(); sr.color = col; sr.sortingOrder = 3;
-        n.transform.localScale = new Vector3(1f,1.5f,1f);
-        var c = n.AddComponent<BoxCollider2D>(); c.size = Vector2.one; c.isTrigger = true;
+        var sprite = LoadSprite($"Assets/Sprites/NPC_{display}.png") ?? MakeSprite();
+        var sr = n.AddComponent<SpriteRenderer>(); sr.sprite = sprite; sr.color = Color.white; sr.sortingOrder = 3;
+        n.transform.localScale = new Vector3(1.5f,1.5f,1f);
+        var c = n.AddComponent<BoxCollider2D>(); c.size = Vector2.one; c.isTrigger = false;
         var npc = n.AddComponent<FlipCombat_NPC>();
         var f = System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance;
         typeof(NPC_Interactable).GetField("dialogueData", f)?.SetValue(npc, data);
@@ -151,8 +152,9 @@ public static class CombatSceneBuilder
     static void MakeTriggerEncounter(string name, Vector3 pos, Color col, DialogueData data, string scene, string display)
     {
         var n = new GameObject(name); n.transform.position = pos;
-        var sr = n.AddComponent<SpriteRenderer>(); sr.sprite = MakeSprite(); sr.color = col; sr.sortingOrder = 3;
-        n.transform.localScale = new Vector3(1f,1.5f,1f);
+        var sprite = LoadSprite("Assets/Sprites/NPC_Campeon.png") ?? MakeSprite();
+        var sr = n.AddComponent<SpriteRenderer>(); sr.sprite = sprite; sr.color = Color.white; sr.sortingOrder = 3;
+        n.transform.localScale = new Vector3(1.5f,1.5f,1f);
         var enc = n.AddComponent<TriggerZone_Encounter>();
         var f = System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance;
         typeof(TriggerZone_Encounter).GetField("_combatSceneName", f)?.SetValue(enc, scene);
@@ -213,29 +215,44 @@ public static class CombatSceneBuilder
         c.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         c.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920,1080);
         c.AddComponent<GraphicRaycaster>();
-        var panel = MakeRT(c.transform,"DialoguePanel",new Vector2(0.05f,0),new Vector2(0.95f,0.3f));
+        var panel = MakeRT(c.transform,"DialoguePanel",new Vector2(0.05f,0.02f),new Vector2(0.95f,0.25f));
         panel.AddComponent<Image>().color = new Color(0.1f,0.1f,0.15f,0.9f);
-        var speakerGO = MakeRT(panel.transform,"SpeakerName",new Vector2(0,1),new Vector2(0.4f,1));
-        var speakerTxt = speakerGO.AddComponent<TextMeshProUGUI>(); speakerTxt.fontSize=28; speakerTxt.fontStyle=FontStyles.Bold; speakerTxt.color=Color.yellow;
-        var textGO = MakeRT(panel.transform,"DialogueText",Vector2.zero,Vector2.one);
-        var dTxt = textGO.AddComponent<TextMeshProUGUI>(); dTxt.fontSize=22; dTxt.color=Color.white; dTxt.maxVisibleCharacters=0;
-        var advGO = MakeRT(panel.transform,"AdvanceIndicator",new Vector2(1,0),new Vector2(1,0));
+        var speakerGO = MakeRT(panel.transform,"SpeakerName",new Vector2(0.02f,0.75f),new Vector2(0.4f,0.98f));
+        var speakerTxt = speakerGO.AddComponent<TextMeshProUGUI>(); speakerTxt.fontSize=24; speakerTxt.fontStyle=FontStyles.Bold; speakerTxt.color=Color.yellow;
+        var textGO = MakeRT(panel.transform,"DialogueText",new Vector2(0.02f,0.05f),new Vector2(0.95f,0.72f));
+        var dTxt = textGO.AddComponent<TextMeshProUGUI>(); dTxt.fontSize=20; dTxt.color=Color.white; dTxt.maxVisibleCharacters=0;
+        var advGO = MakeRT(panel.transform,"AdvanceIndicator",new Vector2(0.93f,0.02f),new Vector2(0.98f,0.15f));
         advGO.AddComponent<TextMeshProUGUI>().text="▼"; advGO.SetActive(false);
-        var typGO = MakeRT(panel.transform,"TypingIndicator",new Vector2(1,0),new Vector2(1,0));
+        var typGO = MakeRT(panel.transform,"TypingIndicator",new Vector2(0.93f,0.02f),new Vector2(0.98f,0.15f));
         typGO.AddComponent<TextMeshProUGUI>().text="..."; typGO.SetActive(false);
-        var optPanel = MakeRT(c.transform,"OptionsPanel",new Vector2(0.3f,0.32f),new Vector2(0.7f,0.6f));
+        var optPanel = MakeRT(c.transform,"OptionsPanel",new Vector2(0.25f,0.27f),new Vector2(0.75f,0.48f));
         var btns = new DialogueOptionButton[4];
         for (int i = 0; i < 4; i++)
         {
             var b = new GameObject($"Opt_{i}"); b.transform.SetParent(optPanel.transform, false);
             var rt = b.AddComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0,1f-(i+1)*0.25f); rt.anchorMax = new Vector2(1,1f-i*0.25f);
+            float btnHeight = 0.20f;
+            float gap = 0.05f;
+            float top = 1f - i * (btnHeight + gap);
+            rt.anchorMin = new Vector2(0.0f, top - btnHeight);
+            rt.anchorMax = new Vector2(1.0f, top);
+            rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            // Button background - solid dark
+            var btnBg = b.AddComponent<Image>();
+            btnBg.color = new Color(0.08f, 0.08f, 0.14f, 1f);
+            // Highlight overlay (shown when selected)
             var hlGO = new GameObject("HL"); hlGO.transform.SetParent(b.transform, false);
-            hlGO.AddComponent<RectTransform>().anchorMax = Vector2.one;
-            var hlImg = hlGO.AddComponent<Image>(); hlImg.color = new Color(0.3f,0.5f,0.8f,0.6f); hlImg.enabled = false;
+            var hlRT = hlGO.AddComponent<RectTransform>();
+            hlRT.anchorMin = Vector2.zero; hlRT.anchorMax = Vector2.one;
+            hlRT.offsetMin = Vector2.zero; hlRT.offsetMax = Vector2.zero;
+            var hlImg = hlGO.AddComponent<Image>(); hlImg.color = new Color(0.1f,0.5f,1f,0.5f); hlImg.enabled = false;
+            // Label text
             var lGO = new GameObject("Lbl"); lGO.transform.SetParent(b.transform, false);
-            lGO.AddComponent<RectTransform>().anchorMax = Vector2.one;
-            var lTxt = lGO.AddComponent<TextMeshProUGUI>(); lTxt.fontSize=20; lTxt.color=Color.white;
+            var lRT = lGO.AddComponent<RectTransform>();
+            lRT.anchorMin = new Vector2(0.05f, 0f); lRT.anchorMax = new Vector2(0.95f, 1f);
+            lRT.offsetMin = Vector2.zero; lRT.offsetMax = Vector2.zero;
+            var lTxt = lGO.AddComponent<TextMeshProUGUI>(); lTxt.fontSize=22; lTxt.color=Color.white;
+            lTxt.alignment = TextAlignmentOptions.MidlineLeft;
             var ob = b.AddComponent<DialogueOptionButton>();
             var bf = System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance;
             typeof(DialogueOptionButton).GetField("labelText",bf)?.SetValue(ob, lTxt);
@@ -257,12 +274,14 @@ public static class CombatSceneBuilder
     static void MakeTransitionCanvas(out Combat_Transition_UI ui)
     {
         var c = new GameObject("TransitionCanvas");
-        var canvas = c.AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 200;
+        var canvas = c.AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 999;
         c.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        c.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920,1080);
+        c.AddComponent<GraphicRaycaster>();
         var bg = MakeRT(c.transform,"BG",Vector2.zero,Vector2.one);
-        bg.AddComponent<Image>().color = new Color(0,0,0,0.85f);
+        bg.AddComponent<Image>().color = new Color(0,0,0,0.9f);
         var txt = MakeRT(c.transform,"Text",new Vector2(0.1f,0.3f),new Vector2(0.9f,0.7f));
-        var tmp = txt.AddComponent<TextMeshProUGUI>(); tmp.text="RETO ACEPTADO"; tmp.fontSize=96;
+        var tmp = txt.AddComponent<TextMeshProUGUI>(); tmp.text="RETO ACEPTADO"; tmp.fontSize=72;
         tmp.fontStyle=FontStyles.Bold; tmp.color=Color.yellow; tmp.alignment=TextAlignmentOptions.Center;
         ui = c.AddComponent<Combat_Transition_UI>();
         var f = System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance;
@@ -307,6 +326,15 @@ public static class CombatSceneBuilder
     {
         var t = Texture2D.whiteTexture;
         return Sprite.Create(t, new Rect(0,0,t.width,t.height), new Vector2(0.5f,0.5f), 100f);
+    }
+
+    static Sprite LoadSprite(string assetPath)
+    {
+        var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+        if (sprite != null) return sprite;
+        var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+        if (tex != null) return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 64f);
+        return null;
     }
 
     static void AddToBuildSettings(string path)

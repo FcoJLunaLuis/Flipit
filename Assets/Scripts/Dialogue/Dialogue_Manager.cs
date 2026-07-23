@@ -54,6 +54,17 @@ namespace Flipit.Dialogue
             }
 
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void Start()
+        {
+            // Find PlayerInput if not already assigned
+            if (playerInput == null)
+            {
+                var player = GameObject.FindGameObjectWithTag("Player");
+                if (player != null) playerInput = player.GetComponent<PlayerInput>();
+            }
         }
 
         /// <summary>
@@ -114,6 +125,9 @@ namespace Flipit.Dialogue
             {
                 playerInput.SwitchCurrentActionMap("UI");
             }
+
+            // Subscribe to UI input actions directly.
+            SubscribeToInput();
 
             // Set up UI.
             _dialogueUI.Show();
@@ -244,6 +258,9 @@ namespace Flipit.Dialogue
             _dialogueUI.ShowAdvanceIndicator(false);
             _dialogueUI.Hide(() =>
             {
+                // Unsubscribe from input actions.
+                UnsubscribeFromInput();
+
                 // Switch input map back to Player.
                 if (playerInput != null)
                 {
@@ -347,18 +364,39 @@ namespace Flipit.Dialogue
             SelectOption(optionIndex);
         }
 
-        // ─── Input Action Handlers ───────────────────────────────────────────────
+        // ─── Input Action Subscriptions ─────────────────────────────────────────
 
-        /// <summary>
-        /// Handles the Submit action from the UI action map.
-        /// - Typing state: skips typewriter to end.
-        /// - WaitingForInput state: advances to next line.
-        /// - ShowingChoices state: confirms the currently highlighted option.
-        /// </summary>
-        public void OnSubmit(InputAction.CallbackContext context)
+        private InputAction _submitAction;
+        private InputAction _cancelAction;
+        private InputAction _navigateAction;
+
+        private void SubscribeToInput()
         {
-            if (!context.performed) return;
+            if (playerInput == null) return;
+            var uiMap = playerInput.actions.FindActionMap("UI");
+            if (uiMap == null) return;
 
+            _submitAction = uiMap.FindAction("Submit");
+            _cancelAction = uiMap.FindAction("Cancel");
+            _navigateAction = uiMap.FindAction("Navigate");
+
+            if (_submitAction != null) _submitAction.performed += HandleSubmit;
+            if (_cancelAction != null) _cancelAction.performed += HandleCancel;
+            if (_navigateAction != null) _navigateAction.performed += HandleNavigate;
+        }
+
+        private void UnsubscribeFromInput()
+        {
+            if (_submitAction != null) _submitAction.performed -= HandleSubmit;
+            if (_cancelAction != null) _cancelAction.performed -= HandleCancel;
+            if (_navigateAction != null) _navigateAction.performed -= HandleNavigate;
+            _submitAction = null;
+            _cancelAction = null;
+            _navigateAction = null;
+        }
+
+        private void HandleSubmit(InputAction.CallbackContext context)
+        {
             switch (CurrentState)
             {
                 case DialogueState.Typing:
@@ -378,15 +416,8 @@ namespace Flipit.Dialogue
             }
         }
 
-        /// <summary>
-        /// Handles the Cancel action from the UI action map.
-        /// Closes dialogue from Typing, WaitingForInput, or ShowingChoices states.
-        /// Ignored during Closing state (Req 7.3).
-        /// </summary>
-        public void OnCancel(InputAction.CallbackContext context)
+        private void HandleCancel(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
-
             switch (CurrentState)
             {
                 case DialogueState.Typing:
@@ -396,20 +427,12 @@ namespace Flipit.Dialogue
                     break;
 
                 case DialogueState.Closing:
-                    // Ignore input during Closing state (Req 7.3).
                     break;
             }
         }
 
-        /// <summary>
-        /// Handles the Navigate action from the UI action map.
-        /// When in ShowingChoices state, reads the Vector2 value and navigates
-        /// the option highlight up or down accordingly.
-        /// </summary>
-        public void OnNavigate(InputAction.CallbackContext context)
+        private void HandleNavigate(InputAction.CallbackContext context)
         {
-            if (!context.performed) return;
-
             if (CurrentState != DialogueState.ShowingChoices)
                 return;
 
@@ -423,6 +446,11 @@ namespace Flipit.Dialogue
             else if (navigation.y < 0f)
                 ui.NavigateDown();
         }
+
+        // Legacy SendMessages callbacks (kept for compatibility)
+        public void OnSubmit(InputAction.CallbackContext context) { if (context.performed) HandleSubmit(context); }
+        public void OnCancel(InputAction.CallbackContext context) { if (context.performed) HandleCancel(context); }
+        public void OnNavigate(InputAction.CallbackContext context) { if (context.performed) HandleNavigate(context); }
 
         // ─── Private Helpers ─────────────────────────────────────────────────────
 

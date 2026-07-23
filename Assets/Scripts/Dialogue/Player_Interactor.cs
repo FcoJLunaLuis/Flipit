@@ -5,27 +5,44 @@ namespace Flipit.Dialogue
 {
     /// <summary>
     /// Attached to the player GameObject. Detects nearby NPC_Interactable components
-    /// via Physics2D.OverlapCircleAll each FixedUpdate and dispatches interaction requests
-    /// to the Dialogue_Manager.
+    /// and handles interaction input by polling the Interact action directly.
     /// </summary>
     public class Player_Interactor : MonoBehaviour
     {
         [SerializeField, Min(0.1f)]
         private float interactionRadius = 2.0f;
 
-        /// <summary>
-        /// The currently detected nearest NPC_Interactable within the interaction radius,
-        /// or null if none is in range.
-        /// </summary>
+        private InteractionPromptHelper _prompt;
+        private PlayerInput _playerInput;
+        private InputAction _interactAction;
+
         public NPC_Interactable CurrentTarget { get; private set; }
 
-        /// <summary>
-        /// The effective interaction radius. Values below 0.1 are clamped to 0.1.
-        /// </summary>
         public float InteractionRadius
         {
             get => interactionRadius;
             set => interactionRadius = Mathf.Max(0.1f, value);
+        }
+
+        private void Awake()
+        {
+            _prompt = GetComponentInChildren<InteractionPromptHelper>(true);
+            _playerInput = GetComponent<PlayerInput>();
+        }
+
+        private void Start()
+        {
+            if (_playerInput != null && _playerInput.actions != null)
+                _interactAction = _playerInput.actions.FindAction("Player/Interact");
+        }
+
+        private void Update()
+        {
+            // Poll the Interact action directly every frame
+            if (_interactAction != null && _interactAction.WasPerformedThisFrame())
+            {
+                TryInteract();
+            }
         }
 
         private void FixedUpdate()
@@ -33,20 +50,27 @@ namespace Flipit.Dialogue
             DetectNearestNPC();
         }
 
-        /// <summary>
-        /// Performs a 2D overlap circle centered on the player's position,
-        /// filters for NPC_Interactable components, and selects the nearest one.
-        /// Clears the target when no NPC_Interactable is within radius.
-        /// </summary>
+        private void TryInteract()
+        {
+            if (CurrentTarget == null)
+                return;
+
+            if (!CurrentTarget.HasValidDialogue)
+                return;
+
+            CurrentTarget.Interact();
+        }
+
         private void DetectNearestNPC()
         {
             float radius = Mathf.Max(0.1f, interactionRadius);
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, radius);
+            var colliders = new System.Collections.Generic.List<Collider2D>();
+            Physics2D.OverlapCircle(transform.position, radius, new ContactFilter2D().NoFilter(), colliders);
 
             NPC_Interactable nearest = null;
             float nearestDistance = float.MaxValue;
 
-            for (int i = 0; i < colliders.Length; i++)
+            for (int i = 0; i < colliders.Count; i++)
             {
                 NPC_Interactable npc = colliders[i].GetComponent<NPC_Interactable>();
                 if (npc == null)
@@ -60,32 +84,27 @@ namespace Flipit.Dialogue
                 }
             }
 
-            CurrentTarget = nearest;
+            if (nearest != CurrentTarget)
+            {
+                CurrentTarget = nearest;
+                UpdatePrompt();
+            }
         }
 
-        /// <summary>
-        /// Called by the Input System when the Interact action is performed.
-        /// Checks for a valid target and Idle state, then starts dialogue.
-        /// </summary>
-        /// <param name="context">The input action callback context.</param>
-        public void OnInteract(InputAction.CallbackContext context)
+        private void UpdatePrompt()
         {
-            if (!context.performed)
-                return;
+            if (_prompt == null) return;
 
-            if (CurrentTarget == null)
-                return;
+            if (CurrentTarget != null)
+                _prompt.Show("[E] Retar");
+            else
+                _prompt.Hide();
+        }
 
-            if (!CurrentTarget.HasValidDialogue)
-                return;
-
-            if (Dialogue_Manager.Instance == null)
-                return;
-
-            if (Dialogue_Manager.Instance.CurrentState != DialogueState.Idle)
-                return;
-
-            Dialogue_Manager.Instance.StartDialogue(CurrentTarget.DialogueData);
+        // Legacy SendMessages callback (kept as fallback)
+        public void OnInteract(InputValue value)
+        {
+            TryInteract();
         }
     }
 }
