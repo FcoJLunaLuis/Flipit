@@ -1,0 +1,16 @@
+{
+    "name": "Flipit.Data",
+    "rootNamespace": "Flipit.Core",
+    "references": [
+        "Flipit.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

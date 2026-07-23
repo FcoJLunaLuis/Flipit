@@ -106,5 +106,7 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ss]ceneDependencyCache*
 
 # Escenas personales de desarrollo (cada dev tiene la suya para testing)
-Assets/Scenes/Dev/Dev_*.unity
-Assets/Scenes/Dev/Dev_*.unity.meta
+Assets/Scripts/**/Dev/
+Assets/Scripts/**/Dev.meta
+Assets/Scenes/Dev/*.unity
+Assets/Scenes/Dev.meta
