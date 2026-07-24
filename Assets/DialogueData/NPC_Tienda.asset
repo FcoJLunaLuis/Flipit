@@ -12,26 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b1c8c67112dc340940882523becb44, type: 3}
   m_Name: NPC_Tienda
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
-  speakerName: Vendedor
+  speakerName: Comerciante
   lines:
-  - text: Bienvenido al rancho las morismas de bracho, te gustaria comprar chicharrines?
+  - text: "\xA1Bienvenido a mi tienda!"
+    options: []
+  - text: "Tengo los mejores art\xEDculos de la ciudad."
+    options: []
+  - text: "\xBFTe gustar\xEDa ver mi mercanc\xEDa?"
     options:
-    - displayText: Si
+    - displayText: "S\xED"
       requiredEventId: 
-      targetLineIndex: 1
+      targetLineIndex: 999
     - displayText: No
       requiredEventId: 
-      targetLineIndex: 99
-  - text: Que cantidad quieres?
-    options:
-    - displayText: $5
-      requiredEventId: 
-      targetLineIndex: 2
-    - displayText: $10
-      requiredEventId: 
-      targetLineIndex: 2
-    - displayText: $15
-      requiredEventId: 
-      targetLineIndex: 2
-  - text: Aqui tienes tus chicharrines! Provecho!
-    options: []
+      targetLineIndex: 999

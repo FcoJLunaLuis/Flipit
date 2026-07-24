@@ -1,0 +1,20 @@
+{
+    "name": "Flipit.CityTerrain",
+    "rootNamespace": "Flipit.CityTerrain",
+    "references": [
+        "Flipit.Dialogue",
+        "Flipit.Combat",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "Unity.ugui"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

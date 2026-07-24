@@ -34,29 +34,50 @@ namespace Flipit.Dialogue
         }
 
         /// <summary>
-        /// Performs a 2D overlap circle centered on the player's position,
+        /// Performs a 3D overlap sphere centered on the player's position,
         /// filters for NPC_Interactable components, and selects the nearest one.
+        /// Falls back to 2D overlap circle if no 3D colliders found.
         /// Clears the target when no NPC_Interactable is within radius.
         /// </summary>
         private void DetectNearestNPC()
         {
             float radius = Mathf.Max(0.1f, interactionRadius);
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, radius);
 
             NPC_Interactable nearest = null;
             float nearestDistance = float.MaxValue;
 
-            for (int i = 0; i < colliders.Length; i++)
+            // Try 3D detection first (for city exploration scene)
+            Collider[] colliders3D = Physics.OverlapSphere(transform.position, radius);
+            for (int i = 0; i < colliders3D.Length; i++)
             {
-                NPC_Interactable npc = colliders[i].GetComponent<NPC_Interactable>();
+                NPC_Interactable npc = colliders3D[i].GetComponent<NPC_Interactable>();
                 if (npc == null)
                     continue;
 
-                float distance = Vector2.Distance(transform.position, npc.transform.position);
+                float distance = Vector3.Distance(transform.position, npc.transform.position);
                 if (distance < nearestDistance)
                 {
                     nearestDistance = distance;
                     nearest = npc;
+                }
+            }
+
+            // Fall back to 2D detection if no 3D results (for dialogue demo scene)
+            if (nearest == null)
+            {
+                Collider2D[] colliders2D = Physics2D.OverlapCircleAll(transform.position, radius);
+                for (int i = 0; i < colliders2D.Length; i++)
+                {
+                    NPC_Interactable npc = colliders2D[i].GetComponent<NPC_Interactable>();
+                    if (npc == null)
+                        continue;
+
+                    float distance = Vector2.Distance(transform.position, npc.transform.position);
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        nearest = npc;
+                    }
                 }
             }
 

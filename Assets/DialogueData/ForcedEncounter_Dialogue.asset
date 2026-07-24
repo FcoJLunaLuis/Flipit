@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
   speakerName: ???
   lines:
-  - text: "\xA1No puedes escapar! \xA1Te reto a una partida de Flipit!"
-    options:
-    - displayText: "\xA1Acepto!"
-      requiredEventId: 
-      targetLineIndex: 1
-  - text: '[COMBAT_ACCEPT]'
+  - text: "\xA1Te encontr\xE9! No hay escapatoria..."
     options: []
+  - text: "\xA1Prep\xE1rate para el combate!"
+    options:
+    - displayText: "\xA1Estoy listo!"
+      requiredEventId: 
+      targetLineIndex: 999
+    - displayText: "\xA1D\xE9jame en paz!"
+      requiredEventId: 
+      targetLineIndex: 999

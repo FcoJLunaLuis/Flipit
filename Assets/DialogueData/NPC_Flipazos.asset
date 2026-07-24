@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b1c8c67112dc340940882523becb44, type: 3}
   m_Name: NPC_Flipazos
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
-  speakerName: Compadre
+  speakerName: Don Flipazos
   lines:
-  - text: Que roio morro unos flipazos?
+  - text: "\xA1Eh t\xFA! \xBFConoces el juego de Flipazos?"
+    options: []
+  - text: Es el mejor juego de cartas de la ciudad.
+    options: []
+  - text: "\xBFQuieres aprender a jugar?"
     options:
-    - displayText: Si
+    - displayText: "S\xED"
       requiredEventId: 
-      targetLineIndex: 1
+      targetLineIndex: 999
     - displayText: No
       requiredEventId: 
-      targetLineIndex: 2
-  - text: Orale! Aqui tienes.
-    options: []
-  - text: Camara pues morro
-    options: []
+      targetLineIndex: 999

@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b1c8c67112dc340940882523becb44, type: 3}
   m_Name: NPC_Guardia1
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
-  speakerName: Guardia
+  speakerName: Guardia Carlos
   lines:
-  - text: Hola bienvenido al rancho las morismas de bracho
+  - text: "Alto ah\xED, ciudadano."
     options: []
+  - text: "Esta zona est\xE1 bajo vigilancia."
+    options: []
+  - text: "\xBFNecesitas algo?"
+    options:
+    - displayText: "S\xED"
+      requiredEventId: 
+      targetLineIndex: 999
+    - displayText: No
+      requiredEventId: 
+      targetLineIndex: 999

@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b1c8c67112dc340940882523becb44, type: 3}
   m_Name: NPC_Guardia2
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
-  speakerName: Anciano
+  speakerName: Guardia Maria
   lines:
-  - text: Como estas? Bienvenido, espero que tu visita sea agradable
+  - text: "\xA1Hola! Soy la guardia de este sector."
     options: []
+  - text: "Ten cuidado por aqu\xED, hay retadores sueltos."
+    options: []
+  - text: "\xBFQuieres que te d\xE9 un consejo?"
+    options:
+    - displayText: "S\xED"
+      requiredEventId: 
+      targetLineIndex: 999
+    - displayText: No
+      requiredEventId: 
+      targetLineIndex: 999

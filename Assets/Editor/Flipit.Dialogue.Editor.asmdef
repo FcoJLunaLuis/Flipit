@@ -3,6 +3,8 @@
     "rootNamespace": "",
     "references": [
         "Flipit.Dialogue",
+        "Flipit.Combat",
+        "Flipit.CityTerrain",
         "Unity.InputSystem",
         "Unity.TextMeshPro",
         "Unity.ugui"

@@ -5,8 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
-using Flipit.Combat;
 using Flipit.Dialogue;
+using Flipit.Combat;
 
 public static class CombatSceneBuilder
 {

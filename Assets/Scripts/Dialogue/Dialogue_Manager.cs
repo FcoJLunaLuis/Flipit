@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -430,7 +429,13 @@ namespace Flipit.Dialogue
             var ui = dialogueUIComponent as Dialogue_UI;
             if (ui == null) return;
 
-            if (navigation.y > 0f)
+            // Use X axis (A/D) for horizontal option navigation
+            if (navigation.x > 0f)
+                ui.NavigateDown(); // Right = next option
+            else if (navigation.x < 0f)
+                ui.NavigateUp(); // Left = previous option
+            // Also support Y axis as fallback
+            else if (navigation.y > 0f)
                 ui.NavigateUp();
             else if (navigation.y < 0f)
                 ui.NavigateDown();
@@ -447,7 +452,11 @@ namespace Flipit.Dialogue
             var nav = value.Get<Vector2>();
             var ui = dialogueUIComponent as Dialogue_UI;
             if (ui == null) return;
-            if (nav.y > 0f) ui.NavigateUp();
+            // Use X axis (A/D) for horizontal option navigation
+            if (nav.x > 0f) ui.NavigateDown(); // Right = next option
+            else if (nav.x < 0f) ui.NavigateUp(); // Left = previous option
+            // Also support Y axis as fallback
+            else if (nav.y > 0f) ui.NavigateUp();
             else if (nav.y < 0f) ui.NavigateDown();
         }
 

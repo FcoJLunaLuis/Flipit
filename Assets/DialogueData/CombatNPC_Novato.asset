@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
   speakerName: Novato
   lines:
-  - text: "\xA1Te reto a una partida de Flipit!"
+  - text: Soy nuevo en esto de los combates...
+    options: []
+  - text: Pero no me subestimes.
+    options: []
+  - text: "\xBFQuieres pelear conmigo?"
     options:
-    - displayText: "\xA1Acepto!"
+    - displayText: "S\xED"
       requiredEventId: 
-      targetLineIndex: 1
-    - displayText: No, gracias.
+      targetLineIndex: 999
+    - displayText: No
       requiredEventId: 
-      targetLineIndex: 2
-  - text: '[COMBAT_ACCEPT]'
-    options: []
-  - text: Hasta luego.
-    options: []
+      targetLineIndex: 999
