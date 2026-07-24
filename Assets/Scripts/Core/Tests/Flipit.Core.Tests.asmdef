@@ -4,6 +4,7 @@
     "references": [
         "Flipit.Core",
         "Flipit.Data",
+        "Flipit.Shop",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

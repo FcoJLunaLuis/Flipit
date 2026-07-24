@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4c9cce0413f5df47a051817a64b9982, type: 3}
+  m_Name: WhiteBag
+  m_EditorClassIdentifier: Flipit.Data::Flipit.Core.BagConfig
+  bagName: Bolsa Blanca
+  tier: 2
+  minChips: 3
+  maxChips: 5
+  costSheintavos: 0
+  costPejecoins: 50
+  costAjolopesos: 0
+  rarityWeights:
+  - rarity: 0
+    baseProbability: 0.5
+    pityBonusPerMiss: 0
+    maxProbability: 1
+  - rarity: 1
+    baseProbability: 0.5
+    pityBonusPerMiss: 0.03
+    maxProbability: 0.9
+  - rarity: 2
+    baseProbability: 0.1
+    pityBonusPerMiss: 0.03
+    maxProbability: 0.6
