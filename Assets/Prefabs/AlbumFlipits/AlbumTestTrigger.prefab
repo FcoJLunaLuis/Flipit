@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5417453106270098018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 49962397134250403}
+  - component: {fileID: 3100599065452236460}
+  m_Layer: 0
+  m_Name: AlbumTestTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &49962397134250403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5417453106270098018}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3100599065452236460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5417453106270098018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b0404e8ec136041bf602cb28ee01d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlbumTestTrigger
+  fichasDeTest:
+  - {fileID: 11400000, guid: 03b7654c1bb5c0a4f984773f3ad6c76b, type: 2}
+  - {fileID: 11400000, guid: ae13b627b12499a4e85e2de0b38ae3c8, type: 2}
+  - {fileID: 11400000, guid: c6ef568b0ce924b478e3bd1a2930bdbe, type: 2}
+  - {fileID: 11400000, guid: 151f952e7a219144697abe5309cabc5c, type: 2}
+  - {fileID: 11400000, guid: 23962967f740dc94186241e80f280fb5, type: 2}
+  - {fileID: 11400000, guid: 588607fb5b8d8624aa608622b6974d7d, type: 2}
+  - {fileID: 11400000, guid: 24e989956373ba445be0adabf19208e7, type: 2}
+  - {fileID: 11400000, guid: 884e3d81661f7324897ce902001624a9, type: 2}
+  - {fileID: 11400000, guid: 6271bbc027c79654593358a4ef72c993, type: 2}
+  - {fileID: 11400000, guid: d55a76d9ba541e547835dd8721a269b2, type: 2}
+  - {fileID: 11400000, guid: f30ca6baa4a52ce4eb6d82277b98f326, type: 2}
+  - {fileID: 11400000, guid: 0697ff52e28ec6e458ce7067bb24c6a9, type: 2}
+  - {fileID: 11400000, guid: d926392f2b11b2c49ae635aa12196728, type: 2}
+  - {fileID: 11400000, guid: d9511a04928ce7947a45b166aadd55f3, type: 2}
+  - {fileID: 11400000, guid: a6c9ef1a350342043a2aaed73ae79b9e, type: 2}
+  teclaAlbum: 3
+  precargarFichas: 1
