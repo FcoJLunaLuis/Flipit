@@ -1,6 +1,5 @@
 /// <summary>
 /// Interfaz que define el contrato para proveer datos del jugador al menú de pausa.
-/// Cuando el sistema de jugador real esté implementado, debe implementar esta interfaz.
 /// </summary>
 public interface IPlayerDataProvider
 {
@@ -10,8 +9,25 @@ public interface IPlayerDataProvider
     string PlayerName { get; }
 
     /// <summary>
-    /// Cantidad de dinero que posee el jugador.
-    /// TODO: Conectar con el sistema de dinero cuando esté desarrollado.
+    /// Total de dinero representado como un entero simple (para compatibilidad).
+    /// Equivale al total en Sheintavos.
     /// </summary>
     int Currency { get; }
+
+    /// <summary>
+    /// Sheintavos del jugador (denominación menor).
+    /// 100 Sheintavos = 1 Pejecoin.
+    /// </summary>
+    int Sheintavos { get; }
+
+    /// <summary>
+    /// Pejecoins del jugador (denominación media).
+    /// 100 Pejecoins = 1 Ajolopeso.
+    /// </summary>
+    int Pejecoins { get; }
+
+    /// <summary>
+    /// Ajolopesos del jugador (denominación mayor, acumulable al infinito).
+    /// </summary>
+    int Ajolopesos { get; }
 }

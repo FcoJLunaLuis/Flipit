@@ -75,8 +75,6 @@ public class PauseMenuUI : MonoBehaviour
     /// </summary>
     public void RefreshPlayerInfo()
     {
-        // Buscar cualquier componente que implemente IPlayerDataProvider en la escena.
-        // Cuando el sistema real de jugador esté listo, solo necesita implementar IPlayerDataProvider.
         var providers = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         IPlayerDataProvider dataProvider = null;
 
@@ -92,12 +90,12 @@ public class PauseMenuUI : MonoBehaviour
         if (dataProvider != null)
         {
             SetPlayerName(dataProvider.PlayerName);
-            SetCurrency(dataProvider.Currency);
+            SetCurrency(dataProvider.Ajolopesos, dataProvider.Pejecoins, dataProvider.Sheintavos);
         }
         else
         {
             SetPlayerName("Jugador");
-            SetCurrency(0);
+            SetCurrency(0, 0, 0);
         }
     }
 
@@ -114,14 +112,13 @@ public class PauseMenuUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Actualiza el dinero mostrado en la UI.
+    /// Actualiza el dinero mostrado en la UI con las 3 denominaciones.
     /// </summary>
-    /// <param name="amount">Cantidad de dinero.</param>
-    public void SetCurrency(int amount)
+    public void SetCurrency(int ajolopesos, int pejecoins, int sheintavos)
     {
         if (playerCurrencyText != null)
         {
-            playerCurrencyText.text = $"${amount}";
+            playerCurrencyText.text = $"{ajolopesos} Ajp | {pejecoins} Pjc | {sheintavos} Sht";
         }
     }
 

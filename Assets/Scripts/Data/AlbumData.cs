@@ -75,6 +75,39 @@ public class AlbumData
     }
 
     /// <summary>
+    /// Remueve múltiples fichas del mismo tipo de una vez.
+    /// Retorna true si se removieron exitosamente, false si no hay suficientes.
+    /// </summary>
+    public bool RemoverFichas(int templateId, int cantidad)
+    {
+        if (cantidad <= 0) return false;
+        if (!fichas.ContainsKey(templateId)) return false;
+        if (fichas[templateId].cantidad < cantidad) return false;
+
+        fichas[templateId].cantidad -= cantidad;
+
+        if (fichas[templateId].cantidad <= 0)
+        {
+            fichas.Remove(templateId);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Agrega múltiples fichas del mismo tipo de una vez.
+    /// </summary>
+    public void AgregarFichas(FichaTemplate template, int cantidad)
+    {
+        if (template == null || cantidad <= 0) return;
+
+        for (int i = 0; i < cantidad; i++)
+        {
+            AgregarFicha(template);
+        }
+    }
+
+    /// <summary>
     /// Obtiene la cantidad de una ficha específica en el álbum.
     /// </summary>
     public int ObtenerCantidad(int templateId)
