@@ -252,16 +252,3 @@ A modular city terrain generation system for "Flipit", a third-person isometric 
 7. WHEN a stage completes successfully, THE City_Generator SHALL log to the Unity Console the completed stage number, the total count of GameObjects created during that stage, and a per-category count (e.g., buildings, streets, props, NPCs) before displaying the confirmation dialog.
 8. WHEN the City_Generator completes Stage 5 generation, THE City_Generator SHALL log the Stage 5 summary to the Unity Console and display a completion dialog indicating all stages are finished, without offering a "proceed" option.
 9. IF a stage encounters an error during generation, THEN THE City_Generator SHALL log the error to the Unity Console, preserve all GameObjects created by previously completed stages, and display an error dialog indicating which stage failed without proceeding to the next stage.
-
-### Requirement 17: Scene Structure and Assembly Organization
-
-**User Story:** As a developer, I want the city generation code organized in its own assembly and scene so that it integrates cleanly with the existing project modules.
-
-#### Acceptance Criteria
-
-1. THE City_Generator scripts SHALL reside in a folder "Assets/Scripts/CityTerrain" with its own assembly definition "Flipit.CityTerrain.asmdef" using rootNamespace "Flipit.CityTerrain".
-2. THE Flipit.CityTerrain assembly SHALL reference Flipit.Dialogue and Flipit.Combat assemblies so that NPC components can be attached during Stage 3.
-3. THE City_Generator SHALL generate all city content into a dedicated Unity scene named "CityExplorationScene" stored in "Assets/Scenes/CityExplorationScene.unity".
-4. WHEN the City_Generator generates the scene, THE City_Generator SHALL organize generated objects under root-level parent GameObjects named "Ground", "Streets", "Sidewalks", "Buildings", "Props", "NPCs", and "Encounters".
-5. THE City_Generator SHALL provide an Editor script located in "Assets/Editor" with its own assembly definition "Flipit.CityTerrain.Editor.asmdef" referencing Flipit.CityTerrain, constrained to the Editor platform, exposing a menu item "Flipit/Generate City" that executes city generation in Edit Mode and saves the scene.
-6. WHEN the City_Generator executes and the target scene already contains previously generated content, THE City_Generator SHALL destroy all existing child objects under the root-level parent GameObjects ("Ground", "Streets", "Sidewalks", "Buildings", "Props", "NPCs", "Encounters") before generating new content.
