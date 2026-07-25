@@ -111,10 +111,10 @@ namespace Flipit.Dialogue
             if (!TryTransition(DialogueState.Typing))
                 return;
 
-            // Switch input map to UI.
+            // Lock player movement during dialogue.
             if (playerInput != null)
             {
-                playerInput.SwitchCurrentActionMap("UI");
+                playerInput.gameObject.SendMessage("LockMovement", SendMessageOptions.DontRequireReceiver);
                 SubscribeToUIActions();
             }
 
@@ -247,13 +247,13 @@ namespace Flipit.Dialogue
             _dialogueUI.ShowAdvanceIndicator(false);
             _dialogueUI.Hide(() =>
             {
-                // Unsubscribe from UI actions before switching map.
+                // Unsubscribe from UI actions.
                 UnsubscribeFromUIActions();
 
-                // Switch input map back to Player.
+                // Unlock player movement.
                 if (playerInput != null)
                 {
-                    playerInput.SwitchCurrentActionMap("Player");
+                    playerInput.gameObject.SendMessage("UnlockMovement", SendMessageOptions.DontRequireReceiver);
                 }
 
                 // Transition to Idle.

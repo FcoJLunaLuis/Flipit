@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16b1c8c67112dc340940882523becb44, type: 3}
-  m_Name: CombatNPC_Retador
+  m_Name: NPC_Tendero
   m_EditorClassIdentifier: Flipit.Dialogue::Flipit.Dialogue.DialogueData
-  speakerName: El Retador
+  speakerName: Tendero
   lines:
-  - text: Te he estado esperando...
+  - text: "\xA1Hola! Bienvenido a la Tiendita."
     options: []
-  - text: "Dicen que eres fuerte. Demu\xE9stralo."
+  - text: Tengo bolsas de frituras con Flipits adentro.
     options: []
-  - text: "\xBFAceptas mi desaf\xEDo?"
+  - text: "\xBFQuieres comprar una bolsa de frituras?"
     options:
-    - displayText: "S\xED"
+    - displayText: "S\xED, deme una"
       requiredEventId: 
       targetLineIndex: 3
-    - displayText: No
+    - displayText: No, gracias
       requiredEventId: 
       targetLineIndex: 999
-  - text: "\xA1RETO ACEPTADO! \xA1En guardia!"
+  - text: "\xA1Aqu\xED tienes! Espero que te toque un Flipit raro. \xA1Vuelve pronto!"
     options: []

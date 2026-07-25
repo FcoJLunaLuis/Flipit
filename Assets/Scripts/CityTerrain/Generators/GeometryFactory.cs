@@ -50,10 +50,10 @@ namespace Flipit.CityTerrain
             go.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
             go.transform.localScale = new Vector3(width, depth, 1f);
 
-            // Position at center of the grid
+            // Position at center of the grid, slightly below streets to avoid Z-fighting
             // Grid goes from (0,0,0) with cells at col*cellSize, row*cellSize
-            // So center is at (width/2, 0, depth/2)
-            go.transform.position = new Vector3(width * 0.5f, 0f, depth * 0.5f);
+            // So center is at (width/2, -0.05, depth/2)
+            go.transform.position = new Vector3(width * 0.5f, -0.05f, depth * 0.5f);
 
             // Replace default material with unlit flat-color
             var renderer = go.GetComponent<MeshRenderer>();

@@ -88,6 +88,9 @@ public static class CityGeneratorBuilder
         // --- Create Dialogue System ---
         CreateDialogueSystem();
 
+        // --- Create Special Buildings ---
+        CreateSpecialBuildings();
+
         // Disable the default Main Camera if present
         var mainCam = GameObject.FindGameObjectWithTag("MainCamera");
         if (mainCam != null && mainCam.name == "Main Camera")
@@ -533,6 +536,140 @@ public static class CityGeneratorBuilder
         else
         {
             Debug.LogWarning($"[CityGeneratorBuilder] Could not find field '{fieldName}' on {target.GetType().Name}");
+        }
+    }
+
+    private static void CreateSpecialBuildings()
+    {
+        float cellSize = 4f; // matches City_Config
+        var buildingsParent = GameObject.Find("City_Generator")?.transform.Find("Buildings");
+        var npcsParent = GameObject.Find("City_Generator")?.transform.Find("NPCs");
+        if (buildingsParent == null || npcsParent == null)
+        {
+            Debug.LogError("[CityGeneratorBuilder] Cannot create special buildings: missing parents.");
+            return;
+        }
+
+        // Define special buildings: (name, position row/col, height, color, label, labelColor, npcName, npcColor, npcDialoguePath, npcOffsetRow)
+        CreateSpecialBuilding(buildingsParent, npcsParent, cellSize,
+            "Building_Coleccion", 6, 6, 8f, new Color(0.6f, 0.2f, 0.8f),
+            "COLECCIÓN", new Color(0.8f, 0.4f, 1f),
+            "NPC_Coleccionista", new Color(0.7f, 0.3f, 0.9f), "Assets/DialogueData/NPC_Coleccionista.asset", -1);
+
+        CreateSpecialBuilding(buildingsParent, npcsParent, cellSize,
+            "Building_Tiendita", 14, 22, 6f, new Color(1f, 0.6f, 0.1f),
+            "TIENDITA", new Color(1f, 0.7f, 0.2f),
+            "NPC_Tendero", new Color(1f, 0.7f, 0.2f), "Assets/DialogueData/NPC_Tendero.asset", -1);
+
+        CreateSpecialBuilding(buildingsParent, npcsParent, cellSize,
+            "Building_Casa", 18, 18, 5f, new Color(0.2f, 0.7f, 0.3f),
+            "CASA", new Color(0.3f, 0.9f, 0.4f),
+            null, default, null, 0); // No NPC for Casa
+
+        Debug.Log("[CityGeneratorBuilder] Special buildings created (Colección, Tiendita, Casa).");
+    }
+
+    private static void CreateSpecialBuilding(Transform buildingsParent, Transform npcsParent, float cellSize,
+        string buildingName, int row, int col, float height, Color buildingColor,
+        string labelText, Color labelColor,
+        string npcName, Color npcColor, string dialoguePath, int npcRowOffset)
+    {
+        float worldX = col * cellSize;
+        float worldZ = row * cellSize;
+
+        // Remove any existing building at this exact position
+        var toRemove = new System.Collections.Generic.List<GameObject>();
+        for (int i = 0; i < buildingsParent.childCount; i++)
+        {
+            var child = buildingsParent.GetChild(i);
+            if (child.name == buildingName) continue; // don't remove self if somehow already exists
+            float dx = Mathf.Abs(child.position.x - worldX);
+            float dz = Mathf.Abs(child.position.z - worldZ);
+            if (dx < cellSize * 0.5f && dz < cellSize * 0.5f)
+                toRemove.Add(child.gameObject);
+        }
+        foreach (var go in toRemove)
+            DestroyImmediate(go);
+
+        // Create the building
+        var building = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        building.name = buildingName;
+        building.transform.position = new Vector3(worldX, height * 0.5f, worldZ);
+        building.transform.localScale = new Vector3(cellSize, height, cellSize);
+        var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        mat.color = buildingColor;
+        building.GetComponent<MeshRenderer>().sharedMaterial = mat;
+        building.transform.SetParent(buildingsParent);
+
+        // Building label (on top)
+        var lblGO = new GameObject("Label");
+        lblGO.transform.SetParent(building.transform);
+        lblGO.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+        lblGO.transform.localScale = new Vector3(0.005f, 0.005f, 0.005f);
+        var cvs = lblGO.AddComponent<Canvas>();
+        cvs.renderMode = RenderMode.WorldSpace;
+        lblGO.GetComponent<RectTransform>().sizeDelta = new Vector2(300f, 60f);
+        var tGO = new GameObject("Text");
+        tGO.transform.SetParent(lblGO.transform, false);
+        var tr = tGO.AddComponent<RectTransform>();
+        tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
+        tr.offsetMin = Vector2.zero; tr.offsetMax = Vector2.zero;
+        var tmp = tGO.AddComponent<TextMeshProUGUI>();
+        tmp.text = labelText;
+        tmp.fontSize = 36;
+        tmp.color = labelColor;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.fontStyle = FontStyles.Bold;
+        tmp.enableWordWrapping = false;
+        tmp.overflowMode = TextOverflowModes.Overflow;
+        lblGO.AddComponent<Flipit.CityTerrain.Billboard>();
+
+        // Create NPC if specified
+        if (!string.IsNullOrEmpty(npcName))
+        {
+            float npcWorldZ = (row + npcRowOffset) * cellSize;
+            var npc = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            npc.name = npcName;
+            npc.transform.position = new Vector3(worldX, 1f, npcWorldZ);
+            var npcMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            npcMat.color = npcColor;
+            npc.GetComponent<MeshRenderer>().sharedMaterial = npcMat;
+            npc.transform.SetParent(npcsParent);
+
+            // Add NPC_Interactable with dialogue
+            var interactable = npc.AddComponent<Flipit.Dialogue.NPC_Interactable>();
+            if (!string.IsNullOrEmpty(dialoguePath))
+            {
+                var dialogue = AssetDatabase.LoadAssetAtPath<Flipit.Dialogue.DialogueData>(dialoguePath);
+                if (dialogue != null)
+                    SetPrivateFieldStatic(interactable, "dialogueData", dialogue);
+            }
+
+            // Silhouette
+            npc.AddComponent<Flipit.CityTerrain.CharacterSilhouette>();
+
+            // NPC label
+            var npcLblGO = new GameObject("Label");
+            npcLblGO.transform.SetParent(npc.transform);
+            npcLblGO.transform.localPosition = new Vector3(0f, 1.8f, 0f);
+            npcLblGO.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
+            var npcCvs = npcLblGO.AddComponent<Canvas>();
+            npcCvs.renderMode = RenderMode.WorldSpace;
+            npcLblGO.GetComponent<RectTransform>().sizeDelta = new Vector2(200f, 50f);
+            var npcTGO = new GameObject("Text");
+            npcTGO.transform.SetParent(npcLblGO.transform, false);
+            var npcTR = npcTGO.AddComponent<RectTransform>();
+            npcTR.anchorMin = Vector2.zero; npcTR.anchorMax = Vector2.one;
+            npcTR.offsetMin = Vector2.zero; npcTR.offsetMax = Vector2.zero;
+            var npcTMP = npcTGO.AddComponent<TextMeshProUGUI>();
+            npcTMP.text = npcName.Replace("NPC_", "");
+            npcTMP.fontSize = 20;
+            npcTMP.color = npcColor;
+            npcTMP.alignment = TextAlignmentOptions.Center;
+            npcTMP.fontStyle = FontStyles.Bold;
+            npcTMP.enableWordWrapping = false;
+            npcTMP.overflowMode = TextOverflowModes.Overflow;
+            npcLblGO.AddComponent<Flipit.CityTerrain.Billboard>();
         }
     }
 

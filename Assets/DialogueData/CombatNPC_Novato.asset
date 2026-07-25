@@ -22,7 +22,9 @@ MonoBehaviour:
     options:
     - displayText: "S\xED"
       requiredEventId: 
-      targetLineIndex: 999
+      targetLineIndex: 3
     - displayText: No
       requiredEventId: 
       targetLineIndex: 999
+  - text: "\xA1RETO ACEPTADO! \xA1Prep\xE1rate para el combate!"
+    options: []

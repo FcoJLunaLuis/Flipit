@@ -19,9 +19,23 @@ namespace Flipit.CityTerrain
         private Vector2 _moveInput;
         private float _verticalVelocity;
         private const float Gravity = -9.81f;
+        private bool _movementLocked;
 
         public Vector2 BoundaryMin { get => _boundaryMin; set => _boundaryMin = value; }
         public Vector2 BoundaryMax { get => _boundaryMax; set => _boundaryMax = value; }
+
+        /// <summary>
+        /// Lock/unlock player movement (e.g., during dialogue).
+        /// </summary>
+        public bool MovementLocked
+        {
+            get => _movementLocked;
+            set
+            {
+                _movementLocked = value;
+                if (_movementLocked) _moveInput = Vector2.zero;
+            }
+        }
 
         private void Awake()
         {
@@ -40,9 +54,17 @@ namespace Flipit.CityTerrain
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
 
-            // Calculate XZ movement from input
-            Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
-            move = move.normalized * _moveSpeed;
+            // Calculate XZ movement (zero if locked)
+            Vector3 move;
+            if (_movementLocked)
+            {
+                move = Vector3.zero;
+            }
+            else
+            {
+                move = new Vector3(_moveInput.x, 0f, _moveInput.y);
+                move = move.normalized * _moveSpeed;
+            }
 
             // Add vertical velocity
             move.y = _verticalVelocity;
@@ -61,7 +83,24 @@ namespace Flipit.CityTerrain
         /// </summary>
         public void OnMove(InputValue value)
         {
-            _moveInput = value.Get<Vector2>();
+            if (!_movementLocked)
+                _moveInput = value.Get<Vector2>();
+        }
+
+        /// <summary>
+        /// Called via SendMessage by Dialogue_Manager to lock movement during dialogue.
+        /// </summary>
+        public void LockMovement()
+        {
+            MovementLocked = true;
+        }
+
+        /// <summary>
+        /// Called via SendMessage by Dialogue_Manager to unlock movement after dialogue.
+        /// </summary>
+        public void UnlockMovement()
+        {
+            MovementLocked = false;
         }
     }
 }
