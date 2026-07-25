@@ -4,7 +4,8 @@
     "references": [
         "Flipit.Core",
         "Flipit.Data",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

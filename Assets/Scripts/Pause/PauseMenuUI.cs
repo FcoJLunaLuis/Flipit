@@ -118,7 +118,7 @@ public class PauseMenuUI : MonoBehaviour
     {
         if (playerCurrencyText != null)
         {
-            playerCurrencyText.text = $"{ajolopesos} Ajp | {pejecoins} Pjc | {sheintavos} Sht";
+            playerCurrencyText.text = $"{ajolopesos} Ajolopesos | {pejecoins} Pejecoins | {sheintavos} Sheintavos";
         }
     }
 

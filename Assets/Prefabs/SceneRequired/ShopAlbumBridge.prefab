@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3589228030717327780
+--- !u!1 &8774349800406579585
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5538660918393700715}
-  - component: {fileID: 6253350830928397526}
+  - component: {fileID: 1587797319392703278}
+  - component: {fileID: 154830779980020978}
   m_Layer: 0
-  m_Name: AlbumManager
+  m_Name: ShopAlbumBridge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5538660918393700715
+--- !u!4 &1587797319392703278
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3589228030717327780}
+  m_GameObject: {fileID: 8774349800406579585}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,21 +32,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6253350830928397526
+--- !u!114 &154830779980020978
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3589228030717327780}
+  m_GameObject: {fileID: 8774349800406579585}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd80133bd3c95f0478410fc7b9ab9fa0, type: 3}
+  m_Script: {fileID: 11500000, guid: 81af4e7e37063884db9ffc1d90acfe17, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AlbumManager
-  albumUI: {fileID: 8469903369403838380, guid: a08e6a3cc674bfb49b9fb7cf3e9f81ea, type: 3}
-  inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  fichasDisponibles:
+  m_EditorClassIdentifier: Assembly-CSharp::ShopAlbumBridge
+  allFichaTemplates:
   - {fileID: 11400000, guid: 03b7654c1bb5c0a4f984773f3ad6c76b, type: 2}
   - {fileID: 11400000, guid: ae13b627b12499a4e85e2de0b38ae3c8, type: 2}
   - {fileID: 11400000, guid: c6ef568b0ce924b478e3bd1a2930bdbe, type: 2}

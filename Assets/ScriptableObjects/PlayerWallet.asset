@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Flipit.Core.WalletData
   wallet:
     sheintavos: 0
-    pejecoins: 0
+    pejecoins: 40
     ajolopesos: 0

@@ -34,6 +34,7 @@ namespace Flipit.NPC
         private NPCUIState currentState = NPCUIState.Closed;
         private int mainMenuIndex; // 0 = Sell, 1 = Trade
         private bool navigationConsumed;
+        private int inputCooldownFrames;
 
         // Input
         private InputActionMap npcActionMap;
@@ -138,6 +139,7 @@ namespace Flipit.NPC
         public void ReturnToMainMenu()
         {
             currentState = NPCUIState.MainMenu;
+            inputCooldownFrames = 2; // Prevent same-frame cancel from closing menu
 
             SetPanelActive(sellPanel, false);
             SetPanelActive(tradePanel, false);
@@ -192,6 +194,12 @@ namespace Flipit.NPC
         {
             if (npcActionMap == null || currentState == NPCUIState.Closed)
                 return;
+
+            if (inputCooldownFrames > 0)
+            {
+                inputCooldownFrames--;
+                return;
+            }
 
             HandleMainMenuInput();
         }

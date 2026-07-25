@@ -22,6 +22,7 @@ namespace Flipit.NPC
         private int selectedChipIndex;
         private int selectedQuantity = 1;
         private bool navigationConsumed;
+        private int inputCooldownFrames;
 
         // Cached input actions
         private InputAction navigateAction;
@@ -89,6 +90,12 @@ namespace Flipit.NPC
 
         private void Update()
         {
+            if (inputCooldownFrames > 0)
+            {
+                inputCooldownFrames--;
+                return;
+            }
+
             if (uiController == null || uiController.CurrentState != NPCUIState.SellPanel)
             {
                 if (uiController != null && uiController.CurrentState == NPCUIState.Confirmation
@@ -192,6 +199,7 @@ namespace Flipit.NPC
         {
             CacheInputActions();
             RefreshChipList();
+            inputCooldownFrames = 2; // Skip input for 2 frames after opening
             OnChipListCursorMoved?.Invoke(selectedChipIndex);
         }
 
@@ -288,6 +296,7 @@ namespace Flipit.NPC
         {
             if (selectAction == null) return;
             if (!selectAction.WasPerformedThisFrame()) return;
+            if (SelectedChipId == null || SelectedChipOwnedCount <= 0) return;
 
             // Show confirmation
             panelState = SellPanelState.Confirmation;

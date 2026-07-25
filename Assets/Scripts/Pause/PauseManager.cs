@@ -24,6 +24,12 @@ public class PauseManager : MonoBehaviour
     public bool IsPaused { get; private set; }
 
     /// <summary>
+    /// Cuando es false, la pausa no se puede activar (otro sistema tiene prioridad, ej: NPC abierto).
+    /// Siempre se permite reanudar aunque CanPause sea false.
+    /// </summary>
+    private bool canPause = true;
+
+    /// <summary>
     /// Evento que se dispara cuando cambia el estado de pausa.
     /// Parámetro: true si se pausó, false si se reanudó.
     /// </summary>
@@ -56,6 +62,7 @@ public class PauseManager : MonoBehaviour
 
     /// <summary>
     /// Alterna entre pausar y reanudar el juego.
+    /// No permite pausar si otro sistema bloqueó la pausa (ej: NPC abierto).
     /// </summary>
     public void TogglePause()
     {
@@ -65,8 +72,25 @@ public class PauseManager : MonoBehaviour
         }
         else
         {
+            if (!canPause) return;
             Pause();
         }
+    }
+
+    /// <summary>
+    /// Bloquea la pausa. Llamar cuando otro sistema toma el control (ej: NPC UI abierta).
+    /// </summary>
+    public void BlockPause()
+    {
+        canPause = false;
+    }
+
+    /// <summary>
+    /// Desbloquea la pausa. Llamar cuando el otro sistema libera el control.
+    /// </summary>
+    public void UnblockPause()
+    {
+        canPause = true;
     }
 
     /// <summary>

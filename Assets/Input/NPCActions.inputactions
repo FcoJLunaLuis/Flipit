@@ -147,7 +147,7 @@
                 {
                     "name": "",
                     "id": "cc111111-1111-1111-1111-111111111111",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
@@ -169,7 +169,7 @@
                 {
                     "name": "",
                     "id": "cc333333-3333-3333-3333-333333333333",
-                    "path": "<Keyboard>/escape",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",

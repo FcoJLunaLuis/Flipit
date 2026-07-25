@@ -19,6 +19,7 @@ namespace Flipit.NPC
         private TradePanelState panelState = TradePanelState.OfferList;
         private int selectedOfferIndex;
         private bool navigationConsumed;
+        private int inputCooldownFrames;
 
         // Cached input actions
         private InputAction navigateAction;
@@ -84,6 +85,12 @@ namespace Flipit.NPC
 
         private void Update()
         {
+            if (inputCooldownFrames > 0)
+            {
+                inputCooldownFrames--;
+                return;
+            }
+
             if (uiController == null || uiController.CurrentState != NPCUIState.TradePanel)
             {
                 if (uiController != null && uiController.CurrentState == NPCUIState.Confirmation
@@ -164,6 +171,7 @@ namespace Flipit.NPC
             CacheInputActions();
             selectedOfferIndex = 0;
             panelState = TradePanelState.OfferList;
+            inputCooldownFrames = 2; // Skip input for 2 frames after opening
             OnOfferCursorMoved?.Invoke(selectedOfferIndex);
         }
 
