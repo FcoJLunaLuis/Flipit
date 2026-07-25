@@ -4,8 +4,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Etapa 2 del minijuego: Barra de fuerza que oscila entre 0 y 1 (ping-pong).
-/// El jugador presiona Space para fijar el valor de fuerza.
-/// En modo NPC, se fija automáticamente en un valor semi-aleatorio.
+/// Confirmar con Space o Click izquierdo.
 /// </summary>
 public class ForcePhase : MonoBehaviour
 {
@@ -67,7 +66,13 @@ public class ForcePhase : MonoBehaviour
         else
         {
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
+            var mouse = Mouse.current;
+
+            bool confirmar = false;
+            if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame) confirmar = true;
+            if (mouse != null && mouse.leftButton.wasPressedThisFrame) confirmar = true;
+
+            if (confirmar)
             {
                 FijarFuerza();
             }

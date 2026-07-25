@@ -4,9 +4,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Etapa 3 del minijuego: Círculo que se expande y contrae.
-/// El radio determina la dispersión del lanzamiento EN UNIDADES MUNDO.
-/// Radio pequeño = preciso, radio grande = disperso.
-/// Output: float en unidades mundo (no normalizado).
+/// Output: radio en unidades mundo. Confirmar con Space o Click izquierdo.
 /// </summary>
 public class PrecisionPhase : MonoBehaviour
 {
@@ -14,9 +12,9 @@ public class PrecisionPhase : MonoBehaviour
     [SerializeField] private float _velocidad = 3f;
 
     [Header("Radio en unidades mundo")]
-    [Tooltip("Radio mínimo de dispersión en unidades mundo (mejor caso)")]
+    [Tooltip("Radio mínimo de dispersión (mejor caso)")]
     [SerializeField] private float _radioMinimoMundo = 0.05f;
-    [Tooltip("Radio máximo de dispersión en unidades mundo (peor caso)")]
+    [Tooltip("Radio máximo de dispersión (peor caso)")]
     [SerializeField] private float _radioMaximoMundo = 0.8f;
 
     [Header("NPC")]
@@ -25,7 +23,6 @@ public class PrecisionPhase : MonoBehaviour
     [SerializeField] private float _npcDelayMin = 0.4f;
     [SerializeField] private float _npcDelayMax = 1.8f;
 
-    /// <summary>Dispersión fijada en unidades mundo.</summary>
     public Action<float> OnPrecisionFijada;
 
     private float _radioActualMundo;
@@ -85,7 +82,13 @@ public class PrecisionPhase : MonoBehaviour
         else
         {
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
+            var mouse = Mouse.current;
+
+            bool confirmar = false;
+            if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame) confirmar = true;
+            if (mouse != null && mouse.leftButton.wasPressedThisFrame) confirmar = true;
+
+            if (confirmar)
             {
                 FijarPrecision();
             }
@@ -102,8 +105,7 @@ public class PrecisionPhase : MonoBehaviour
     private void FijarPrecision()
     {
         _activo = false;
-        // Output: radio en unidades mundo (usado directamente como dispersión en ImpactResolver)
         OnPrecisionFijada?.Invoke(_radioActualMundo);
-        Debug.Log($"[PrecisionPhase] Dispersión fijada: {_radioActualMundo:F3} unidades mundo (normalizado: {_dispersionNormalizada:F2})");
+        Debug.Log($"[PrecisionPhase] Dispersión fijada: {_radioActualMundo:F3} unidades mundo");
     }
 }

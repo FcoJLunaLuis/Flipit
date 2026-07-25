@@ -2,41 +2,41 @@ using UnityEngine;
 
 /// <summary>
 /// Ficha lanzable en combate. Se instancia, recibe velocidad, y al colisionar
-/// con fichas de la torre (PhysicsChip) amplifica el impacto para que
-/// las fichas salgan despedidas satisfactoriamente.
-/// Pre-configurado en un prefab con MeshCollider(convex) y Rigidbody.
+/// con fichas de la torre (PhysicsChip) amplifica el impacto.
+/// Si la ficha impactada está en el suelo (plana), aplica más fuerza horizontal
+/// para que reaccione al golpe.
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class LaunchableChip : MonoBehaviour
 {
     [Header("Amplificación de Impacto")]
     [Tooltip("Multiplicador de fuerza aplicada a las fichas impactadas")]
-    [SerializeField] private float _amplificacionFuerza = 5f;
+    [SerializeField] private float _amplificacionFuerza = 15f;
     [Tooltip("Fuerza mínima para que se aplique amplificación")]
-    [SerializeField] private float _velocidadMinimaImpacto = 1f;
+    [SerializeField] private float _velocidadMinimaImpacto = 0.5f;
     [Tooltip("Componente vertical adicional al impacto (para que las fichas salten)")]
-    [SerializeField] private float _fuerzaVertical = 2f;
+    [SerializeField] private float _fuerzaVertical = 1f;
+
+    [Header("Fichas en Suelo")]
+    [Tooltip("Multiplicador extra cuando la ficha impactada está plana en el suelo")]
+    [SerializeField] private float _amplificacionSuelo = 5f;
+    [Tooltip("Altura máxima para considerar que una ficha está en el suelo")]
+    [SerializeField] private float _alturaMaximaSuelo = 1f;
 
     [Header("Autodestrucción")]
     [SerializeField] private float _tiempoVida = 5f;
 
     private Rigidbody _rb;
-    private bool _impactoRealizado;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
     }
 
-    /// <summary>
-    /// Lanza la ficha con la velocidad indicada.
-    /// Llamado por ImpactResolver después de instanciar.
-    /// </summary>
     public void Lanzar(Vector3 velocidad)
     {
         _rb.isKinematic = false;
         _rb.linearVelocity = velocidad;
-        _impactoRealizado = false;
 
         Destroy(gameObject, _tiempoVida);
 
@@ -45,29 +45,49 @@ public class LaunchableChip : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Solo amplificar si tiene suficiente velocidad
         if (_rb.linearVelocity.magnitude < _velocidadMinimaImpacto) return;
+
+        // Solo impactar fichas de torre (por tag)
+        if (!collision.gameObject.CompareTag("FichaTorre")) return;
 
         var chip = collision.gameObject.GetComponent<PhysicsChip>();
         if (chip == null) return;
+        if (chip.Rb == null || chip.Rb.isKinematic) return;
 
-        // Calcular dirección del impacto
-        Vector3 puntoContacto = collision.contacts[0].point;
-        Vector3 direccionImpacto = (collision.transform.position - puntoContacto).normalized;
-
-        // Añadir componente vertical para que las fichas salten
-        direccionImpacto.y += _fuerzaVertical;
-        direccionImpacto.Normalize();
-
-        // Amplificar la fuerza basada en la velocidad de impacto
-        float fuerzaImpacto = _rb.linearVelocity.magnitude * _amplificacionFuerza;
-
-        // Aplicar fuerza a la ficha impactada
-        if (chip.Rb != null && !chip.Rb.isKinematic)
+        // Dirección: siempre horizontal, desde este objeto hacia la ficha objetivo (proyección XZ)
+        Vector3 direccion = chip.transform.position - transform.position;
+        direccion.y = 0f;
+        if (direccion.sqrMagnitude < 0.001f)
         {
-            chip.Rb.AddForce(direccionImpacto * fuerzaImpacto, ForceMode.Impulse);
+            direccion = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+        }
+        direccion = direccion.normalized;
+
+        // Agregar componente vertical para que levante un poco
+        Vector3 fuerzaFinal = direccion + Vector3.up * _fuerzaVertical;
+        fuerzaFinal.Normalize();
+
+        // Calcular magnitud: velocidad de impacto × amplificación
+        float magnitud = _rb.linearVelocity.magnitude * _amplificacionFuerza;
+
+        // Si está en el suelo, multiplicar extra
+        bool fichaEnSuelo = chip.transform.position.y < _alturaMaximaSuelo;
+        if (fichaEnSuelo)
+        {
+            magnitud *= _amplificacionSuelo;
         }
 
-        Debug.Log($"[LaunchableChip] Impacto con {chip.name}. Fuerza aplicada: {fuerzaImpacto:F1}");
+        // Aplicar fuerza
+        chip.Rb.AddForce(fuerzaFinal * magnitud, ForceMode.Impulse);
+
+        // Torque para que gire
+        Vector3 torque = Vector3.Cross(Vector3.up, direccion) * magnitud * 0.5f;
+        chip.Rb.AddTorque(torque, ForceMode.Impulse);
+
+        // Desactivar collider después del impacto
+        var col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
+        Debug.Log($"[LaunchableChip] Impacto con {chip.name}. Fuerza:{magnitud:F1} Dir:{fuerzaFinal} EnSuelo:{fichaEnSuelo}");
     }
 }

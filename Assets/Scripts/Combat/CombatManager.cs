@@ -15,6 +15,10 @@ public class CombatManager : MonoBehaviour
     [Header("Configuración")]
     [SerializeField] private CombatConfig _config;
 
+    [Header("Timing")]
+    [Tooltip("Segundos de espera entre turnos")]
+    [SerializeField] private float _delayEntreTurnos = 2.5f;
+
     [Header("Referencias - Minijuego")]
     [SerializeField] private ThrowMinigameController _minigameController;
 
@@ -245,10 +249,16 @@ public class CombatManager : MonoBehaviour
             _combatData.CambiarTurno();
             OnTurnoCambiado?.Invoke();
 
-            Debug.Log($"[CombatManager] Fichas restantes: {_combatData.FichasRestantes}. Cambiando turno a {_combatData.TurnoActual}.");
+            Debug.Log($"[CombatManager] Fichas restantes: {_combatData.FichasRestantes}. Cambiando turno a {_combatData.TurnoActual}. Esperando {_delayEntreTurnos}s...");
 
-            IniciarTurnoLanzamiento();
+            StartCoroutine(SiguienteTurnoConDelay());
         }
+    }
+
+    private System.Collections.IEnumerator SiguienteTurnoConDelay()
+    {
+        yield return new WaitForSeconds(_delayEntreTurnos);
+        IniciarTurnoLanzamiento();
     }
 
     private void TerminarCombate()

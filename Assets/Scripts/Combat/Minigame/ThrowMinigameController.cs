@@ -60,17 +60,19 @@ public class ThrowMinigameController : MonoBehaviour
     {
         _estado = MinigameState.Aim;
 
-        // Configurar centro de la torre para la lemniscata
         Vector3 centroTorre = Vector3.zero;
         float radio = 2f;
+        System.Collections.Generic.List<PhysicsChip> fichasSinVoltear = null;
+
         if (_towerPhysicsBuilder != null)
         {
             centroTorre = _towerPhysicsBuilder.CentroTorre;
+            fichasSinVoltear = _towerPhysicsBuilder.ObtenerFichasSinVoltear();
         }
 
         _aimPhase.OnPosicionFijada = null;
         _aimPhase.OnPosicionFijada += OnAimComplete;
-        _aimPhase.Iniciar(_config.velocidadMira, centroTorre, radio, _esNPC);
+        _aimPhase.Iniciar(_config.velocidadMira, centroTorre, radio, _esNPC, fichasSinVoltear);
     }
 
     private void OnAimComplete(Vector3 posicionMundo)

@@ -10,9 +10,9 @@ public class TowerPhysicsBuilder : MonoBehaviour
 {
     [Header("Configuración")]
     [SerializeField] private GameObject _fichaPrefab;
-    [SerializeField] private float _espaciadoVertical = 0.04f;
+    [SerializeField] private float _espaciadoVertical = 7f;
     [SerializeField] private float _masaBase = 1f;
-    [SerializeField] private float _offsetSueloY = 0.05f;
+    [SerializeField] private float _offsetSueloY = 1f;
 
     [Header("Delay antes del primer turno")]
     [SerializeField] private float _delayPostConstruccion = 1.5f;

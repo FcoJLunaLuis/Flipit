@@ -14,9 +14,9 @@ public class ImpactResolver : MonoBehaviour
 
     [Header("Configuración de Lanzamiento")]
     [Tooltip("Velocidad base del lanzamiento (se multiplica por el valor del minijuego 0-1)")]
-    [SerializeField] private float _velocidadBase = 20f;
+    [SerializeField] private float _velocidadBase = 40f;
     [Tooltip("Altura desde donde se lanza la ficha respecto al centro de la torre")]
-    [SerializeField] private float _alturaLanzamiento = 5f;
+    [SerializeField] private float _alturaLanzamiento = 30f;
 
     private GameObject _ultimaFichaLanzada;
 
