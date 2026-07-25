@@ -1,91 +1,112 @@
 using UnityEngine;
 
 /// <summary>
-/// Define el área de juego del combate: suelo sólido con BoxCollider
-/// y radio límite invisible que contiene las fichas.
+/// Define el área de juego del combate.
+/// Los muros se asignan desde el Inspector y se acomodan automáticamente
+/// al polígono guía con el método AcomodarMuros() (botón en Editor).
+/// El gizmo muestra el polígono y se adapta a la cantidad de muros asignados.
 /// </summary>
 public class CombatArena : MonoBehaviour
 {
     [Header("Suelo")]
-    [SerializeField] private float _sueloTamano = 5f;
-    [SerializeField] private float _sueloGrosor = 0.1f;
+    [Tooltip("Referencia al GameObject del suelo (hijo de este objeto). Configurar manualmente.")]
+    [SerializeField] private GameObject _suelo;
 
-    [Header("Radio Límite")]
-    [Tooltip("Radio máximo donde las fichas pueden estar. Configurable para pruebas.")]
-    [SerializeField] private float _radioLimite = 2f;
+    [Header("Muros")]
+    [Tooltip("Arrastra aquí los GameObjects con BoxCollider que servirán como muros.")]
+    [SerializeField] private GameObject[] _muros;
 
-    [Header("Debug")]
+    [Header("Configuración del Polígono")]
+    [Tooltip("Radio del polígono (distancia del centro a cada muro)")]
+    [SerializeField] private float _radioPoligono = 5f;
+    [Tooltip("Altura de los muros")]
+    [SerializeField] private float _alturaMuros = 3f;
+
+    [Header("Debug - Gizmo")]
     [SerializeField] private bool _mostrarGizmos = true;
-    [SerializeField] private Color _colorGizmoRadio = new Color(1f, 0f, 0f, 0.3f);
+    [SerializeField] private Color _colorGizmo = new Color(1f, 0f, 0f, 0.3f);
 
-    private GameObject _suelo;
     private Vector3 _centroArena;
 
-    public float RadioLimite => _radioLimite;
     public Vector3 CentroArena => _centroArena;
+    public float RadioPoligono => _radioPoligono;
+    public int CantidadLados => _muros != null ? _muros.Length : 0;
 
     /// <summary>
-    /// Inicializa la arena centrada en la posición dada (centro de la torre).
+    /// Inicializa el centro de la arena.
     /// </summary>
     public void InicializarArena(Vector3 centro)
     {
         _centroArena = centro;
         _centroArena.y = transform.position.y;
-
-        CrearSuelo();
-    }
-
-    private void CrearSuelo()
-    {
-        if (_suelo != null) Destroy(_suelo);
-
-        _suelo = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        _suelo.name = "Suelo_Arena";
-        _suelo.transform.SetParent(transform);
-        _suelo.transform.position = new Vector3(_centroArena.x, _centroArena.y - _sueloGrosor / 2f, _centroArena.z);
-        _suelo.transform.localScale = new Vector3(_sueloTamano, _sueloGrosor, _sueloTamano);
-
-        // Remover MeshCollider si existe y usar BoxCollider
-        var meshCol = _suelo.GetComponent<MeshCollider>();
-        if (meshCol != null) Object.Destroy(meshCol);
-
-        var boxCol = _suelo.GetComponent<BoxCollider>();
-        if (boxCol == null) boxCol = _suelo.AddComponent<BoxCollider>();
-
-        // Material gris oscuro
-        var renderer = _suelo.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            var propBlock = new MaterialPropertyBlock();
-            propBlock.SetColor("_BaseColor", new Color(0.3f, 0.3f, 0.3f, 1f));
-            renderer.SetPropertyBlock(propBlock);
-        }
     }
 
     /// <summary>
-    /// Mantiene las fichas dentro del radio. Llamar en FixedUpdate.
-    /// Clampea la posición horizontal de cada ficha al radio límite.
+    /// Método vacío — los muros físicos se encargan de contener.
     /// </summary>
     public void ContenerFicha(PhysicsChip chip)
     {
-        if (chip == null || chip.Rb == null || chip.Rb.isKinematic) return;
+    }
 
-        Vector3 pos = chip.transform.position;
-        Vector3 offset = new Vector3(pos.x - _centroArena.x, 0f, pos.z - _centroArena.z);
-
-        if (offset.magnitude > _radioLimite)
+    /// <summary>
+    /// Posiciona y rota cada muro al centro de cada lado del polígono.
+    /// Ajusta el BoxCollider de cada muro al ancho del lado.
+    /// Llamar desde el Editor (botón custom) o desde código.
+    /// </summary>
+    public void AcomodarMuros()
+    {
+        if (_muros == null || _muros.Length == 0)
         {
-            Vector3 clamped = offset.normalized * _radioLimite;
-            chip.transform.position = new Vector3(
-                _centroArena.x + clamped.x,
-                pos.y,
-                _centroArena.z + clamped.z
+            Debug.LogWarning("[CombatArena] No hay muros asignados.");
+            return;
+        }
+
+        int lados = _muros.Length;
+        float anguloPorLado = 360f / lados;
+        Vector3 centro = transform.position;
+
+        for (int i = 0; i < lados; i++)
+        {
+            if (_muros[i] == null) continue;
+
+            float angulo = i * anguloPorLado * Mathf.Deg2Rad;
+            float siguienteAngulo = (i + 1) * anguloPorLado * Mathf.Deg2Rad;
+
+            // Punto medio del lado
+            float midX = (_radioPoligono * Mathf.Cos(angulo) + _radioPoligono * Mathf.Cos(siguienteAngulo)) / 2f;
+            float midZ = (_radioPoligono * Mathf.Sin(angulo) + _radioPoligono * Mathf.Sin(siguienteAngulo)) / 2f;
+
+            // Posicionar en el punto medio del lado, a media altura
+            _muros[i].transform.position = new Vector3(
+                centro.x + midX,
+                centro.y + _alturaMuros / 2f,
+                centro.z + midZ
             );
 
-            // Anular velocidad horizontal para que no siga empujando
-            Vector3 vel = chip.Rb.linearVelocity;
-            chip.Rb.linearVelocity = new Vector3(0f, vel.y, 0f);
+            // Rotar para que el muro quede perpendicular al radio (mirando hacia el centro)
+            Vector3 direccionAlCentro = (centro - _muros[i].transform.position);
+            direccionAlCentro.y = 0f;
+            if (direccionAlCentro.sqrMagnitude > 0.001f)
+            {
+                _muros[i].transform.rotation = Quaternion.LookRotation(direccionAlCentro.normalized, Vector3.up);
+            }
+
+            // Ajustar el BoxCollider si existe
+            var boxCol = _muros[i].GetComponent<BoxCollider>();
+            if (boxCol != null)
+            {
+                float v1X = _radioPoligono * Mathf.Cos(angulo);
+                float v1Z = _radioPoligono * Mathf.Sin(angulo);
+                float v2X = _radioPoligono * Mathf.Cos(siguienteAngulo);
+                float v2Z = _radioPoligono * Mathf.Sin(siguienteAngulo);
+                float ancho = Vector2.Distance(new Vector2(v1X, v1Z), new Vector2(v2X, v2Z));
+
+                boxCol.size = new Vector3(ancho, _alturaMuros, 0.2f);
+                boxCol.center = Vector3.zero;
+            }
         }
+
+        Debug.Log($"[CombatArena] {lados} muros acomodados. Radio:{_radioPoligono} Altura:{_alturaMuros}");
     }
 
     private void OnDrawGizmos()
@@ -93,27 +114,23 @@ public class CombatArena : MonoBehaviour
         if (!_mostrarGizmos) return;
 
         Vector3 centro = Application.isPlaying ? _centroArena : transform.position;
+        int lados = (_muros != null && _muros.Length > 2) ? _muros.Length : 8;
+        float anguloPorLado = 360f / lados;
 
-        // Dibujar radio
-        Gizmos.color = _colorGizmoRadio;
-        DrawCircleGizmo(centro, _radioLimite, 32);
+        Gizmos.color = _colorGizmo;
 
-        // Dibujar suelo
-        Gizmos.color = new Color(0.5f, 0.5f, 0.5f, 0.2f);
-        Gizmos.DrawCube(centro, new Vector3(_sueloTamano, 0.05f, _sueloTamano));
-    }
-
-    private void DrawCircleGizmo(Vector3 centro, float radio, int segmentos)
-    {
-        float paso = 360f / segmentos;
-        Vector3 prev = centro + new Vector3(radio, 0f, 0f);
-
-        for (int i = 1; i <= segmentos; i++)
+        for (int i = 0; i < lados; i++)
         {
-            float angulo = i * paso * Mathf.Deg2Rad;
-            Vector3 next = centro + new Vector3(Mathf.Cos(angulo) * radio, 0f, Mathf.Sin(angulo) * radio);
-            Gizmos.DrawLine(prev, next);
-            prev = next;
+            float angulo = i * anguloPorLado * Mathf.Deg2Rad;
+            float siguienteAngulo = (i + 1) * anguloPorLado * Mathf.Deg2Rad;
+
+            Vector3 v1 = centro + new Vector3(Mathf.Cos(angulo) * _radioPoligono, 0f, Mathf.Sin(angulo) * _radioPoligono);
+            Vector3 v2 = centro + new Vector3(Mathf.Cos(siguienteAngulo) * _radioPoligono, 0f, Mathf.Sin(siguienteAngulo) * _radioPoligono);
+
+            Gizmos.DrawLine(v1, v2);
+            Gizmos.DrawLine(v1, v1 + Vector3.up * _alturaMuros);
+            Gizmos.DrawLine(v2, v2 + Vector3.up * _alturaMuros);
+            Gizmos.DrawLine(v1 + Vector3.up * _alturaMuros, v2 + Vector3.up * _alturaMuros);
         }
     }
 }

@@ -62,11 +62,10 @@ public class ThrowMinigameController : MonoBehaviour
 
         // Configurar centro de la torre para la lemniscata
         Vector3 centroTorre = Vector3.zero;
-        float radio = 1f;
+        float radio = 2f;
         if (_towerPhysicsBuilder != null)
         {
             centroTorre = _towerPhysicsBuilder.CentroTorre;
-            radio = 0.8f; // Radio de la lemniscata alrededor de la torre
         }
 
         _aimPhase.OnPosicionFijada = null;

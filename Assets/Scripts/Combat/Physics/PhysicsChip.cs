@@ -54,17 +54,7 @@ public class PhysicsChip : MonoBehaviour
 
     private void ConfigurarCollider()
     {
-        // Remover colliders existentes que vengan del modelo
-        var existingColliders = GetComponentsInChildren<Collider>();
-        foreach (var col in existingColliders)
-        {
-            Destroy(col);
-        }
-
-        // Agregar BoxCollider con tamaño correcto para la ficha
-        var boxCol = gameObject.AddComponent<BoxCollider>();
-        boxCol.size = new Vector3(0.011f, 0.016f, 0.05f);
-        boxCol.center = Vector3.zero;
+        // No tocar colliders — el prefab FichaTorre ya viene con el collider correcto
     }
 
     /// <summary>
