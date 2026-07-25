@@ -104,3 +104,9 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Escenas personales de desarrollo (cada dev tiene la suya para testing)
+Assets/Scripts/**/Dev/
+Assets/Scripts/**/Dev.meta
+Assets/Scenes/Dev/*.unity
+Assets/Scenes/Dev.meta

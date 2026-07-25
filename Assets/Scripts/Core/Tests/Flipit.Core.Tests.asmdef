@@ -1,0 +1,26 @@
+{
+    "name": "Flipit.Core.Tests",
+    "rootNamespace": "Flipit.Core.Tests",
+    "references": [
+        "Flipit.Core",
+        "Flipit.Data",
+        "Flipit.Shop",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
