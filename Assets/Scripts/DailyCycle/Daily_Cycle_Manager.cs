@@ -131,8 +131,17 @@ namespace Flipit.DailyCycle
                 return;
             }
 
+            // Disable CharacterController before moving (it blocks direct transform changes)
+            var characterController = _playerGameObject.GetComponent<CharacterController>();
+            if (characterController != null)
+                characterController.enabled = false;
+
             _playerGameObject.transform.position = _schoolSpawnPoint.position;
             _playerGameObject.transform.rotation = _schoolSpawnPoint.rotation;
+
+            if (characterController != null)
+                characterController.enabled = true;
+
             Daily_Cycle_Event_Bus.BroadcastPlayerRespawned();
         }
 
