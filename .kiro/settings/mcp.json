@@ -19,7 +19,11 @@
         "find_gameobjects",
         "manage_asset",
         "manage_gameobject",
-        "manage_shader"
+        "manage_shader",
+        "manage_script",
+        "manage_script",
+        "script_apply_edits",
+        "apply_text_edits"
       ]
     }
   }
