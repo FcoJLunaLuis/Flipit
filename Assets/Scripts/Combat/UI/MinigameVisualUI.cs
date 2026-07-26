@@ -33,10 +33,12 @@ public class MinigameVisualUI : MonoBehaviour
     private Canvas _canvas;
     private RectTransform _canvasRect;
 
-    private void Start()
+private void Start()
     {
         _mainCamera = Camera.main;
-        _canvas = GetComponent<Canvas>();
+        _canvas = GetComponentInParent<Canvas>();
+        if (_canvas == null)
+            _canvas = GetComponent<Canvas>();
         if (_canvas != null)
             _canvasRect = _canvas.GetComponent<RectTransform>();
     }
@@ -73,26 +75,24 @@ public class MinigameVisualUI : MonoBehaviour
         ActualizarCirculoPrecision();
     }
 
-    private void ActualizarMira()
+private void ActualizarMira()
     {
-        if (_aimPhase == null || !_aimPhase.EstaActivo || _miraTransform == null || _mainCamera == null) return;
+        if (_aimPhase == null || !_aimPhase.EstaActivo || _miraTransform == null) return;
 
-        // Convertir posición mundo del AimPhase a posición en pantalla
+        // Refresh camera reference (active camera may have changed)
+        _mainCamera = Camera.main;
+        if (_mainCamera == null) return;
+
         Vector3 posicionMundo = _aimPhase.PosicionActualMundo;
         Vector3 screenPos = _mainCamera.WorldToScreenPoint(posicionMundo);
 
-        // Convertir screen position a posición en el canvas
-        if (_canvasRect != null)
-        {
-            Vector2 localPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _canvasRect, screenPos, null, out localPoint);
-            _miraTransform.anchoredPosition = localPoint;
-        }
-        else
-        {
-            _miraTransform.position = screenPos;
-        }
+        RectTransform parentRect = _miraTransform.parent as RectTransform;
+        if (parentRect == null) parentRect = _canvasRect;
+
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            parentRect, screenPos, null, out localPoint);
+        _miraTransform.anchoredPosition = localPoint;
     }
 
     private void ActualizarBarraFuerza()
@@ -102,7 +102,7 @@ public class MinigameVisualUI : MonoBehaviour
         _barraFuerza.value = _forcePhase.ValorActual;
     }
 
-    private void ActualizarCirculoPrecision()
+private void ActualizarCirculoPrecision()
     {
         if (_precisionPhase == null || !_precisionPhase.EstaActivo || _circuloTransform == null) return;
 
@@ -111,14 +111,22 @@ public class MinigameVisualUI : MonoBehaviour
         float escalaVisual = radioMundo * _escalaCirculoMultiplicador;
         _circuloTransform.sizeDelta = new Vector2(escalaVisual, escalaVisual);
 
-        // Posicionar el círculo donde quedó la mira (última posición fijada del AimPhase)
-        if (_aimPhase != null && _mainCamera != null && _canvasRect != null)
+        // Refresh camera reference
+        _mainCamera = Camera.main;
+        if (_mainCamera == null) return;
+
+        // Posicionar el círculo donde quedó la mira
+        if (_aimPhase != null)
         {
             Vector3 posAim = _aimPhase.PosicionActualMundo;
             Vector3 screenPos = _mainCamera.WorldToScreenPoint(posAim);
+
+            RectTransform parentRect = _circuloTransform.parent as RectTransform;
+            if (parentRect == null) parentRect = _canvasRect;
+
             Vector2 localPoint;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _canvasRect, screenPos, null, out localPoint);
+                parentRect, screenPos, null, out localPoint);
             _circuloTransform.anchoredPosition = localPoint;
         }
     }

@@ -2,6 +2,7 @@
     "name": "Flipit.CoinFlip",
     "rootNamespace": "Flipit.CoinFlip",
     "references": [
+        "Flipit.Core",
         "Unity.InputSystem",
         "Unity.TextMeshPro",
         "Unity.ugui"

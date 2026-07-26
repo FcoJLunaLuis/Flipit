@@ -16,12 +16,14 @@ public class CoinFlipManager : MonoBehaviour
     [Tooltip("Referencia al script CoinFlipUI")]
     [SerializeField] private CoinFlipUI _coinFlipUI;
 
+    [Tooltip("Cámara del CoinFlip (dentro del prefab)")]
+    [SerializeField] private Camera _coinCamera;
+
     public Action<bool> OnFlipCompletado;
 
     private Action<bool> _callbackActual;
     private int _totalCaras;
     private int _totalCruces;
-    private GameObject _camaraPrincipal;
 
     public int TotalCaras => _totalCaras;
     public int TotalCruces => _totalCruces;
@@ -44,6 +46,15 @@ public class CoinFlipManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // Registrar la cámara de CoinFlip en el CameraManager
+        if (_coinCamera != null && CameraManager.Instance != null)
+        {
+            CameraManager.Instance.RegistrarCamara(CameraManager.CameraType.CoinFlip, _coinCamera);
+        }
+    }
+
     private void OnEnable()
     {
         if (_coinFlipUI != null)
@@ -60,15 +71,14 @@ public class CoinFlipManager : MonoBehaviour
         }
     }
 
-    public void IniciarFlip(Action<bool> onCompletado = null)
+public void IniciarFlip(Action<bool> onCompletado = null)
     {
         _callbackActual = onCompletado;
 
-        _camaraPrincipal = Camera.main?.gameObject;
-
-        if (_camaraPrincipal != null)
+        // Activar la cámara de CoinFlip via CameraManager
+        if (CameraManager.Instance != null)
         {
-            _camaraPrincipal.SetActive(false);
+            CameraManager.Instance.ActivarCamara(CameraManager.CameraType.CoinFlip);
         }
 
         if (_contenedorFlip != null)
@@ -123,18 +133,17 @@ public class CoinFlipManager : MonoBehaviour
         _callbackActual = null;
     }
 
-    private void DesactivarFlip()
+private void DesactivarFlip()
     {
         if (_contenedorFlip != null)
         {
             _contenedorFlip.SetActive(false);
         }
 
-        if (_camaraPrincipal != null)
+        // Activar la cámara de combate (después del flip sigue el combate)
+        if (CameraManager.Instance != null)
         {
-            _camaraPrincipal.SetActive(true);
-            _camaraPrincipal = null;
+            CameraManager.Instance.ActivarCamara(CameraManager.CameraType.Combat);
         }
-
     }
 }

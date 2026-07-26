@@ -124,7 +124,7 @@ public class CoinFlip : MonoBehaviour
         Debug.Log($"[CoinFlip] Apuesta: {_apuestaJugador} | Resultado decidido: {_resultadoActual} (Bolsa restante: {_bolsa.Remaining})");
     }
 
-    private void HacerSnap()
+private void HacerSnap()
     {
         _rb.angularVelocity = Vector3.Lerp(_rb.angularVelocity, Vector3.zero, Time.deltaTime * _velocidadSnap);
         _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, _rotacionTarget, Time.deltaTime * _velocidadSnap));
@@ -132,24 +132,36 @@ public class CoinFlip : MonoBehaviour
         float angulo = Quaternion.Angle(_rb.rotation, _rotacionTarget);
         bool detenida = _rb.linearVelocity.magnitude < 0.05f && angulo < _anguloSnapCompletado;
 
-        if (detenida)
+        // Timeout de seguridad: si después de 5 segundos no converge, forzar
+        bool timeout = Time.time - _tiempoLanzamiento > 5f;
+
+        if (detenida || timeout)
         {
+            if (timeout)
+            {
+                Debug.LogWarning("[CoinFlip] Snap timeout. Forzando resultado.");
+            }
+
             _rb.rotation = _rotacionTarget;
+            _rb.linearVelocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;
             _estadoActual = Estado.Terminado;
             OnResultado?.Invoke(_resultadoActual);
         }
     }
 
-    private Quaternion ObtenerRotacionTarget(ResultadoMoneda resultado)
+private Quaternion ObtenerRotacionTarget(ResultadoMoneda resultado)
     {
+        // Rotaciones explícitas fijas para evitar inestabilidad de LookRotation
         if (resultado == ResultadoMoneda.Cara)
         {
-            return Quaternion.LookRotation(Vector3.up, _rb.transform.up);
+            // Cara arriba: moneda plana con normal apuntando hacia arriba
+            return Quaternion.Euler(0f, 0f, 0f);
         }
         else
         {
-            return Quaternion.LookRotation(Vector3.down, _rb.transform.up);
+            // Cruz arriba: moneda volteada 180° en X
+            return Quaternion.Euler(180f, 0f, 0f);
         }
     }
 

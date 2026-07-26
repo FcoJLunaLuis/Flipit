@@ -35,7 +35,7 @@ public class AimPhase : MonoBehaviour
     public Vector3 PosicionActualMundo => _posicionActualMundo;
     public bool EstaActivo => _activo;
 
-    public void Iniciar(float velocidad, Vector3 centroTorre, float radio, bool esNPC = false, List<PhysicsChip> fichasSinVoltear = null)
+public void Iniciar(float velocidad, Vector3 centroTorre, float radio, bool esNPC = false, List<PhysicsChip> fichasSinVoltear = null)
     {
         _velocidadWASD = velocidad;
         _centroTorre = centroTorre;
@@ -102,7 +102,7 @@ public class AimPhase : MonoBehaviour
         }
     }
 
-    private void ActualizarPosicionJugador()
+private void ActualizarPosicionJugador()
     {
         var keyboard = Keyboard.current;
         var mouse = Mouse.current;
@@ -138,20 +138,17 @@ public class AimPhase : MonoBehaviour
         }
 
         // Clampear: no permitir que la mira pase a través de los muros (colliders)
-        // Hacemos un raycast desde el centro hacia la posición de la mira
-        // Si hay un collider entre el centro y la mira, limitamos ahí
         Vector3 direccion = _posicionActualMundo - _centroTorre;
         direccion.y = 0f;
 
         if (direccion.sqrMagnitude > 0.01f)
         {
             RaycastHit hit;
-            float distancia = direccion.magnitude;
-            Ray ray = new Ray(_centroTorre + Vector3.up * 0.5f, direccion.normalized);
+            float dist = direccion.magnitude;
+            Ray wallRay = new Ray(_centroTorre + Vector3.up * 0.5f, direccion.normalized);
 
-            if (Physics.Raycast(ray, out hit, distancia))
+            if (Physics.Raycast(wallRay, out hit, dist))
             {
-                // Limitar la mira justo antes del collider
                 Vector3 puntoLimite = hit.point - direccion.normalized * 0.1f;
                 _posicionActualMundo = new Vector3(puntoLimite.x, _centroTorre.y, puntoLimite.z);
             }

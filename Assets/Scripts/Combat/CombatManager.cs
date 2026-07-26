@@ -274,11 +274,15 @@ public class CombatManager : MonoBehaviour
         OnCombateTerminado?.Invoke(_combatData);
     }
 
-    public void SalirDelCombate()
+public void SalirDelCombate()
     {
         // Restaurar estado de exploración
         if (GameStateManager.Instance != null)
             GameStateManager.Instance.SetExploration();
+
+        // Restaurar cámara del jugador
+        if (CameraManager.Instance != null)
+            CameraManager.Instance.ActivarCamara(CameraManager.CameraType.Player);
 
         if (_towerPhysicsBuilder != null)
             _towerPhysicsBuilder.LimpiarTorre();

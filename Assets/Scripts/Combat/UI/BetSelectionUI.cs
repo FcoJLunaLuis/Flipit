@@ -1,131 +1,268 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// UI para seleccionar fichas de apuesta y ficha lanzadora.
-/// Muestra las fichas del álbum del jugador y permite seleccionar hasta el máximo.
+/// UI de selección de apuesta con 3 zonas:
+/// - Panel Derecho: Fichas disponibles del álbum (2 filas × 5, paginado). Click = apostar.
+/// - Panel Izquierdo: Fichas apostadas (máx 5). Click = devolver.
+/// - Zona Inferior: Fichas candidatas a lanzadora (no apostadas). Click = seleccionar lanzadora.
+/// - Botón "Listo": Solo activo cuando la apuesta es válida (min fichas + lanzadora).
+///
+/// Se muestra automáticamente cuando CombatManager entra en fase BetSelection.
 /// </summary>
 public class BetSelectionUI : MonoBehaviour
 {
-    [Header("Referencias UI")]
-    [SerializeField] private Transform _contenedorFichas;
-    [SerializeField] private GameObject _fichaPrefab;
-    [SerializeField] private TextMeshProUGUI _contadorTexto;
-    [SerializeField] private TextMeshProUGUI _lanzadoraTexto;
-    [SerializeField] private Button _botonConfirmar;
-    [SerializeField] private Button _botonCancelar;
+    [Header("Panel Principal")]
     [SerializeField] private GameObject _panelSeleccion;
 
-    [Header("Colores de selección")]
-    [SerializeField] private Color _colorNormal = Color.white;
-    [SerializeField] private Color _colorApuesta = Color.yellow;
-    [SerializeField] private Color _colorLanzadora = Color.cyan;
+    [Header("Panel Derecho - Fichas Disponibles")]
+    [SerializeField] private Transform _contenedorDisponibles;
+    [SerializeField] private GameObject _slotPrefab;
+    [SerializeField] private TextMeshProUGUI _paginaTexto;
+    [SerializeField] private Button _botonPaginaSiguiente;
+    [SerializeField] private Button _botonPaginaAnterior;
+
+    [Header("Panel Izquierdo - Fichas Apostadas")]
+    [SerializeField] private Transform _contenedorApostadas;
+
+    [Header("Zona Inferior - Selección de Lanzadora")]
+    [SerializeField] private Transform _contenedorLanzadora;
+    [SerializeField] private TextMeshProUGUI _lanzadoraTexto;
+
+    [Header("Botones")]
+    [SerializeField] private Button _botonListo;
+    [SerializeField] private TextMeshProUGUI _contadorTexto;
+
+    [Header("Colores")]
+    [SerializeField] private Color _colorNormal = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+    [SerializeField] private Color _colorApuesta = new Color(0.9f, 0.7f, 0.1f, 0.9f);
+    [SerializeField] private Color _colorLanzadora = new Color(0.1f, 0.8f, 0.9f, 0.9f);
+
+    private const int FICHAS_POR_PAGINA = 10;
 
     private CombatManager _combatManager;
-    private AlbumData _albumJugador;
-    private List<BetSlotUI> _slotsUI = new List<BetSlotUI>();
+    private AlbumData _albumData;
+    private List<AlbumEntry> _todasLasFichas = new List<AlbumEntry>();
+    private int _paginaActual;
+    private int _totalPaginas;
+
+    // Slots instanciados
+    private List<BetSlotUI> _slotsDisponibles = new List<BetSlotUI>();
+    private List<BetSlotUI> _slotsApostadas = new List<BetSlotUI>();
+    private List<BetSlotUI> _slotsLanzadora = new List<BetSlotUI>();
+
+    // === LIFECYCLE ===
 
     private void OnEnable()
     {
-        if (_botonConfirmar != null)
-            _botonConfirmar.onClick.AddListener(OnConfirmar);
-
-        if (_botonCancelar != null)
-            _botonCancelar.onClick.AddListener(OnCancelar);
+        if (_botonListo != null)
+            _botonListo.onClick.AddListener(OnListoPresionado);
+        if (_botonPaginaSiguiente != null)
+            _botonPaginaSiguiente.onClick.AddListener(PaginaSiguiente);
+        if (_botonPaginaAnterior != null)
+            _botonPaginaAnterior.onClick.AddListener(PaginaAnterior);
     }
 
     private void OnDisable()
     {
-        if (_botonConfirmar != null)
-            _botonConfirmar.onClick.RemoveListener(OnConfirmar);
-
-        if (_botonCancelar != null)
-            _botonCancelar.onClick.RemoveListener(OnCancelar);
+        if (_botonListo != null)
+            _botonListo.onClick.RemoveListener(OnListoPresionado);
+        if (_botonPaginaSiguiente != null)
+            _botonPaginaSiguiente.onClick.RemoveListener(PaginaSiguiente);
+        if (_botonPaginaAnterior != null)
+            _botonPaginaAnterior.onClick.RemoveListener(PaginaAnterior);
     }
 
+    // === API PÚBLICA ===
+
+    /// <summary>
+    /// Muestra el panel de selección con las fichas del jugador.
+    /// </summary>
     public void Mostrar(CombatManager combatManager, AlbumData album)
     {
         _combatManager = combatManager;
-        _albumJugador = album;
+        _albumData = album;
+        _paginaActual = 0;
+
+        // Obtener fichas no rotas
+        _todasLasFichas = album.ObtenerTodasLasFichas()
+            .Where(e => !e.ficha.estaRoto)
+            .ToList();
+
+        _totalPaginas = Mathf.Max(1, Mathf.CeilToInt((float)_todasLasFichas.Count / FICHAS_POR_PAGINA));
 
         if (_panelSeleccion != null)
             _panelSeleccion.SetActive(true);
 
-        GenerarSlots();
-        ActualizarUI();
+        RefrescarTodo();
     }
 
+    /// <summary>
+    /// Oculta el panel de selección y limpia los slots.
+    /// </summary>
     public void Ocultar()
     {
         if (_panelSeleccion != null)
             _panelSeleccion.SetActive(false);
 
-        LimpiarSlots();
+        LimpiarSlots(_slotsDisponibles);
+        LimpiarSlots(_slotsApostadas);
+        LimpiarSlots(_slotsLanzadora);
     }
 
-    private void GenerarSlots()
+    // === REFRESCO DE UI ===
+
+    private void RefrescarTodo()
     {
-        LimpiarSlots();
+        RefrescarPanelDisponibles();
+        RefrescarPanelApostadas();
+        RefrescarZonaLanzadora();
+        RefrescarEstadoBotones();
+    }
 
-        if (_albumJugador == null || _contenedorFichas == null || _fichaPrefab == null) return;
+    private void RefrescarPanelDisponibles()
+    {
+        LimpiarSlots(_slotsDisponibles);
 
-        var entradas = _albumJugador.ObtenerTodasLasFichas();
+        if (_contenedorDisponibles == null || _slotPrefab == null) return;
 
-        foreach (var entrada in entradas)
+        var betLogic = _combatManager.BetSelection;
+
+        // Fichas que NO están apostadas ni son lanzadora
+        var fichasDisponibles = _todasLasFichas
+            .Where(e => !betLogic.EstaSeleccionada(e.ficha.templateId) && !betLogic.EsLanzadora(e.ficha.templateId))
+            .ToList();
+
+        // Recalcular paginación sobre fichas disponibles reales
+        _totalPaginas = Mathf.Max(1, Mathf.CeilToInt((float)fichasDisponibles.Count / FICHAS_POR_PAGINA));
+        if (_paginaActual >= _totalPaginas) _paginaActual = _totalPaginas - 1;
+
+        var fichasVisibles = fichasDisponibles
+            .Skip(_paginaActual * FICHAS_POR_PAGINA)
+            .Take(FICHAS_POR_PAGINA)
+            .ToList();
+
+        foreach (var entrada in fichasVisibles)
         {
-            if (entrada.ficha.estaRoto) continue;
+            var slotGO = Instantiate(_slotPrefab, _contenedorDisponibles);
+            var slot = slotGO.GetComponent<BetSlotUI>();
+            if (slot == null) slot = slotGO.AddComponent<BetSlotUI>();
 
-            var slotGO = Instantiate(_fichaPrefab, _contenedorFichas);
-            var slotUI = slotGO.GetComponent<BetSlotUI>();
+            slot.Configurar(entrada.ficha, OnFichaDisponibleClickeada);
+            slot.SetColor(_colorNormal);
+            _slotsDisponibles.Add(slot);
+        }
 
-            if (slotUI == null)
-                slotUI = slotGO.AddComponent<BetSlotUI>();
+        // Paginación
+        if (_paginaTexto != null)
+            _paginaTexto.text = $"{_paginaActual + 1}/{_totalPaginas}";
 
-            slotUI.Configurar(entrada.ficha, OnFichaClickeada);
-            _slotsUI.Add(slotUI);
+        if (_botonPaginaSiguiente != null)
+            _botonPaginaSiguiente.interactable = _paginaActual < _totalPaginas - 1;
+
+        if (_botonPaginaAnterior != null)
+            _botonPaginaAnterior.interactable = _paginaActual > 0;
+    }
+
+    private void RefrescarPanelApostadas()
+    {
+        LimpiarSlots(_slotsApostadas);
+
+        if (_contenedorApostadas == null || _slotPrefab == null) return;
+
+        var betLogic = _combatManager.BetSelection;
+        var fichasApostadas = betLogic.FichasSeleccionadas;
+
+        foreach (var ficha in fichasApostadas)
+        {
+            var slotGO = Instantiate(_slotPrefab, _contenedorApostadas);
+            var slot = slotGO.GetComponent<BetSlotUI>();
+            if (slot == null) slot = slotGO.AddComponent<BetSlotUI>();
+
+            slot.Configurar(ficha, OnFichaApostadaClickeada);
+            slot.SetColor(_colorApuesta);
+            _slotsApostadas.Add(slot);
         }
     }
 
-    private void LimpiarSlots()
+    private void RefrescarZonaLanzadora()
     {
-        foreach (var slot in _slotsUI)
+        LimpiarSlots(_slotsLanzadora);
+
+        if (_contenedorLanzadora == null || _slotPrefab == null) return;
+
+        var betLogic = _combatManager.BetSelection;
+
+        // Candidatas: fichas no apostadas
+        var candidatas = _todasLasFichas
+            .Where(e => !betLogic.EstaSeleccionada(e.ficha.templateId))
+            .ToList();
+
+        foreach (var entrada in candidatas)
         {
-            if (slot != null && slot.gameObject != null)
-                Destroy(slot.gameObject);
+            var slotGO = Instantiate(_slotPrefab, _contenedorLanzadora);
+            var slot = slotGO.GetComponent<BetSlotUI>();
+            if (slot == null) slot = slotGO.AddComponent<BetSlotUI>();
+
+            slot.Configurar(entrada.ficha, OnFichaLanzadoraClickeada);
+
+            bool esLanzadora = betLogic.EsLanzadora(entrada.ficha.templateId);
+            slot.SetColor(esLanzadora ? _colorLanzadora : _colorNormal);
+            _slotsLanzadora.Add(slot);
         }
-        _slotsUI.Clear();
+
+        // Texto de lanzadora
+        if (_lanzadoraTexto != null)
+        {
+            if (betLogic.FichaLanzadora != null)
+                _lanzadoraTexto.text = $"Lanzadora: {betLogic.FichaLanzadora.nombre}";
+            else
+                _lanzadoraTexto.text = "Selecciona tu ficha lanzadora:";
+        }
     }
 
-    private void OnFichaClickeada(FichaData ficha, BetSlotUI slot)
+    private void RefrescarEstadoBotones()
+    {
+        var betLogic = _combatManager.BetSelection;
+        int max = _combatManager.Config.maxFichasApuesta;
+
+        // Contador
+        if (_contadorTexto != null)
+            _contadorTexto.text = $"Apostadas: {betLogic.CantidadSeleccionada}/{max}";
+
+        // Botón listo
+        if (_botonListo != null)
+            _botonListo.interactable = betLogic.ApuestaCompleta;
+    }
+
+    // === HANDLERS DE CLICK ===
+
+    private void OnFichaDisponibleClickeada(FichaData ficha, BetSlotUI slot)
     {
         if (_combatManager == null) return;
 
         var betLogic = _combatManager.BetSelection;
-
-        // Si es la lanzadora actual, deseleccionar
-        if (betLogic.EsLanzadora(ficha.templateId))
+        if (betLogic.SeleccionarFicha(ficha))
         {
-            // No hay método para deseleccionar lanzadora, simplemente la ignoramos
-            return;
+            RefrescarTodo();
         }
-
-        // Si ya está seleccionada como apuesta, deseleccionar
-        if (betLogic.EstaSeleccionada(ficha.templateId))
-        {
-            betLogic.DeseleccionarFicha(ficha);
-        }
-        else
-        {
-            // Intentar agregar como apuesta
-            betLogic.SeleccionarFicha(ficha);
-        }
-
-        ActualizarUI();
     }
 
-    public void OnFichaLanzadoraClickeada(FichaData ficha)
+    private void OnFichaApostadaClickeada(FichaData ficha, BetSlotUI slot)
+    {
+        if (_combatManager == null) return;
+
+        var betLogic = _combatManager.BetSelection;
+        if (betLogic.DeseleccionarFicha(ficha))
+        {
+            RefrescarTodo();
+        }
+    }
+
+    private void OnFichaLanzadoraClickeada(FichaData ficha, BetSlotUI slot)
     {
         if (_combatManager == null) return;
 
@@ -135,62 +272,56 @@ public class BetSelectionUI : MonoBehaviour
         if (betLogic.EstaSeleccionada(ficha.templateId)) return;
 
         betLogic.SeleccionarFichaLanzadora(ficha);
-        ActualizarUI();
+        RefrescarTodo();
     }
 
-    private void ActualizarUI()
+    // === PAGINACIÓN ===
+
+    private void PaginaSiguiente()
+    {
+        if (_paginaActual < _totalPaginas - 1)
+        {
+            _paginaActual++;
+            RefrescarTodo();
+        }
+    }
+
+    private void PaginaAnterior()
+    {
+        if (_paginaActual > 0)
+        {
+            _paginaActual--;
+            RefrescarTodo();
+        }
+    }
+
+    // === BOTÓN LISTO ===
+
+    private void OnListoPresionado()
     {
         if (_combatManager == null) return;
 
-        var betLogic = _combatManager.BetSelection;
-        int max = _combatManager.Config.maxFichasApuesta;
-
-        // Actualizar contador
-        if (_contadorTexto != null)
-            _contadorTexto.text = $"Fichas apostadas: {betLogic.CantidadSeleccionada}/{max}";
-
-        // Actualizar texto de lanzadora
-        if (_lanzadoraTexto != null)
+        string error;
+        if (!_combatManager.BetSelection.ValidarSeleccion(out error))
         {
-            if (betLogic.FichaLanzadora != null)
-                _lanzadoraTexto.text = $"Lanzadora: {betLogic.FichaLanzadora.nombre}";
-            else
-                _lanzadoraTexto.text = "Lanzadora: (selecciona una)";
+            Debug.LogWarning($"[BetSelectionUI] Selección inválida: {error}");
+            return;
         }
 
-        // Actualizar colores de slots
-        foreach (var slot in _slotsUI)
-        {
-            if (slot == null || slot.Ficha == null) continue;
-
-            if (betLogic.EsLanzadora(slot.Ficha.templateId))
-                slot.SetColor(_colorLanzadora);
-            else if (betLogic.EstaSeleccionada(slot.Ficha.templateId))
-                slot.SetColor(_colorApuesta);
-            else
-                slot.SetColor(_colorNormal);
-        }
-
-        // Habilitar botón confirmar solo si la selección es válida
-        if (_botonConfirmar != null)
-            _botonConfirmar.interactable = betLogic.ApuestaCompleta;
+        Debug.Log("[BetSelectionUI] Apuesta confirmada. Iniciando combate...");
+        _combatManager.ConfirmarApuestas();
+        Ocultar();
     }
 
-    private void OnConfirmar()
-    {
-        if (_combatManager != null)
-        {
-            _combatManager.ConfirmarApuestas();
-            Ocultar();
-        }
-    }
+    // === UTILIDADES ===
 
-    private void OnCancelar()
+    private void LimpiarSlots(List<BetSlotUI> slots)
     {
-        if (_combatManager != null)
+        foreach (var slot in slots)
         {
-            _combatManager.BetSelection.Limpiar();
-            ActualizarUI();
+            if (slot != null && slot.gameObject != null)
+                Destroy(slot.gameObject);
         }
+        slots.Clear();
     }
 }
