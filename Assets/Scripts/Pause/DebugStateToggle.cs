@@ -23,10 +23,10 @@ public class DebugStateToggle : MonoBehaviour
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
-        if (keyboard[toggleKey].wasPressedThisFrame)
+        /* if (keyboard[toggleKey].wasPressedThisFrame)
         {
             ToggleState();
-        }
+        } */
 
         // Actualizar display
         if (GameStateManager.Instance != null)
@@ -62,7 +62,7 @@ public class DebugStateToggle : MonoBehaviour
             ? GameStateManager.Instance.CurrentState.ToString()
             : "N/A";
 
-        GUI.Label(new Rect(10, 10, 300, 25), $"Estado: {state} (F1 para cambiar)");
-        GUI.Label(new Rect(10, 35, 300, 25), $"Pausa: Presiona Escape");
+        /* GUI.Label(new Rect(10, 10, 300, 25), $"Estado: {state} (F1 para cambiar)");
+        GUI.Label(new Rect(10, 35, 300, 25), $"Pausa: Presiona Escape"); */
     }
 }

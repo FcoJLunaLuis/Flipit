@@ -71,6 +71,10 @@ public class CombatManager : MonoBehaviour
         CambiarFase(CombatData.CombatPhase.BetSelection);
         OnCombateIniciado?.Invoke();
 
+        // Notificar al GameStateManager que estamos en combate
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetCombat();
+
         Debug.Log("[CombatManager] Combate iniciado. Esperando selección de fichas...");
     }
 
@@ -272,6 +276,10 @@ public class CombatManager : MonoBehaviour
 
     public void SalirDelCombate()
     {
+        // Restaurar estado de exploración
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.SetExploration();
+
         if (_towerPhysicsBuilder != null)
             _towerPhysicsBuilder.LimpiarTorre();
 

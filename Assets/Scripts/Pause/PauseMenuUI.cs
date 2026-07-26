@@ -177,13 +177,30 @@ public class PauseMenuUI : MonoBehaviour
 
     private void OnAlbumFichasPressed()
     {
-        // Delegado al componente AlbumFichasButton que se encarga de instanciar el prefab.
-        // Si no existe el componente, solo logea.
-        var albumBtn = GetComponentInChildren<AlbumFichasButton>(true);
-        if (albumBtn == null)
+        if (AlbumManager.Instance != null)
         {
-            Debug.Log("[PauseMenuUI] Álbum de Fichas presionado. AlbumFichasButton no encontrado.");
+            // Suscribirse para reactivar el panel cuando se cierre el álbum
+            AlbumManager.Instance.OnAlbumCerrado -= OnAlbumCerrado;
+            AlbumManager.Instance.OnAlbumCerrado += OnAlbumCerrado;
+
+            // Ocultar menú de pausa y abrir álbum
+            gameObject.SetActive(false);
+            AlbumManager.Instance.AbrirAlbum();
+            Debug.Log("[PauseMenuUI] Álbum abierto desde menú de pausa.");
         }
+        else
+        {
+            Debug.LogWarning("[PauseMenuUI] AlbumManager no encontrado en la escena.");
+        }
+    }
+
+    private void OnAlbumCerrado()
+    {
+        if (AlbumManager.Instance != null)
+            AlbumManager.Instance.OnAlbumCerrado -= OnAlbumCerrado;
+
+        gameObject.SetActive(true);
+        Debug.Log("[PauseMenuUI] Álbum cerrado. Menú de pausa reactivado.");
     }
 
     /// <summary>
