@@ -81,7 +81,7 @@ void Awake()
 
         if (albumActionMap == null)
         {
-            Debug.LogError("[AlbumInputHandler] No se encontró el Action Map 'Album'.");
+            Debug.LogWarning("[AlbumInputHandler] No se encontró el Action Map 'Album'. La navegación por teclado del álbum no estará disponible.");
             return;
         }
 

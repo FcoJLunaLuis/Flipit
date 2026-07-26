@@ -53,7 +53,11 @@ public class GameStateManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+
+        // DontDestroyOnLoad only works on root GameObjects
+        if (transform.parent == null)
+            DontDestroyOnLoad(gameObject);
+
         currentState = initialState;
     }
 
