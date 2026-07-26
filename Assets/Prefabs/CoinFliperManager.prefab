@@ -260,9 +260,10 @@ GameObject:
   - component: {fileID: 7535655721245064238}
   - component: {fileID: 7987691892371860795}
   - component: {fileID: 6087885743519029177}
+  - component: {fileID: 4453665185476072870}
   m_Layer: 0
   m_Name: CoinCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -385,6 +386,23 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &4453665185476072870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4027984492673179161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 541ac5b1e4d464e438cb5e4061086f4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinFlipCamera
+  _coinFlip: {fileID: 4939923588489044590}
+  _target: {fileID: 7686889083163115507}
+  _velocidadLookAt: 8
+  _tiempoSeguimientoCaida: 1
+  _velocidadRegreso: 3
 --- !u!1 &4256203077166270094
 GameObject:
   m_ObjectHideFlags: 0

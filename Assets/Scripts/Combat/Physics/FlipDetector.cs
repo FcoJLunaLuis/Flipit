@@ -22,6 +22,7 @@ public class FlipDetector : MonoBehaviour
 
     private bool _evaluando;
     private float _tiempoInicioEvaluacion;
+    private HashSet<PhysicsChip> _volteadasAntesDeTurno = new HashSet<PhysicsChip>();
 
     public bool EstaEvaluando => _evaluando;
 
@@ -33,7 +34,15 @@ public class FlipDetector : MonoBehaviour
         _evaluando = true;
         _tiempoInicioEvaluacion = Time.time;
 
-        // Activar auto-evaluación en cada ficha
+        // Guardar snapshot de fichas ya volteadas antes de este turno
+        _volteadasAntesDeTurno.Clear();
+        foreach (var chip in _towerBuilder.Fichas)
+        {
+            if (chip != null && chip.ResultadoVolteada)
+                _volteadasAntesDeTurno.Add(chip);
+        }
+
+        // Activar auto-evaluación en cada ficha que aún no se volteó
         var fichas = _towerBuilder.ObtenerFichasSinVoltear();
         foreach (var chip in fichas)
         {
@@ -97,16 +106,18 @@ public class FlipDetector : MonoBehaviour
     {
         _evaluando = false;
 
-        var volteadas = new List<PhysicsChip>();
+        // Solo reportar fichas que se voltearon EN ESTE TURNO (no las previas)
+        var volteadasEsteTurno = new List<PhysicsChip>();
         foreach (var chip in _towerBuilder.Fichas)
         {
-            if (chip != null && chip.EstaEvaluada && chip.ResultadoVolteada)
+            if (chip != null && chip.EstaEvaluada && chip.ResultadoVolteada
+                && !_volteadasAntesDeTurno.Contains(chip))
             {
-                volteadas.Add(chip);
+                volteadasEsteTurno.Add(chip);
             }
         }
 
-        Debug.Log($"[FlipDetector] Turno completo. {volteadas.Count} fichas volteadas.");
-        OnEvaluacionCompleta?.Invoke(volteadas);
+        Debug.Log($"[FlipDetector] Turno completo. {volteadasEsteTurno.Count} fichas volteadas este turno.");
+        OnEvaluacionCompleta?.Invoke(volteadasEsteTurno);
     }
 }

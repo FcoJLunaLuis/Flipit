@@ -34,12 +34,6 @@ public class CombatSummaryUI : MonoBehaviour
 
     private CombatManager _combatManager;
 
-    private void Awake()
-    {
-        if (_panelResumen != null)
-            _panelResumen.SetActive(false);
-    }
-
     private void OnEnable()
     {
         if (_botonContinuar != null)
