@@ -1,0 +1,23 @@
+{
+    "name": "Flipit.Dialogue.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Flipit.Dialogue",
+        "Flipit.Combat",
+        "Flipit.CityTerrain",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "Unity.ugui"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
