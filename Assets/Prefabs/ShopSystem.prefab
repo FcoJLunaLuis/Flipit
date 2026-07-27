@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8327967596330766620
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7534009508619919091}
+  - component: {fileID: 5427330924901675647}
+  - component: {fileID: 629296791496680187}
+  - component: {fileID: 5107845233302582980}
+  - component: {fileID: 1149061078798964681}
+  m_Layer: 0
+  m_Name: ShopSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7534009508619919091
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327967596330766620}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5427330924901675647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327967596330766620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc19f9848b1aeb54ab722819ad3ad61a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Flipit.Shop::Flipit.Shop.ShopManager
+  bagConfigs:
+  - {fileID: 11400000, guid: cec661ede7913e44d8bef7479aecd376, type: 2}
+  - {fileID: 11400000, guid: 2f4b9c80a25ef3c419bc6979c5ff4869, type: 2}
+  - {fileID: 11400000, guid: 8968a52b2419fab49abbbf4c970a1bd4, type: 2}
+  wallet: {fileID: 11400000, guid: 1fe3357fd56caaf46b5a86f185cf2680, type: 2}
+  pityConfig: {fileID: 11400000, guid: 534c5102402e30d4595401a1e0488e24, type: 2}
+  pityTracker:
+    bagsSinceLastRare: 0
+    bagsSinceLastUltraRare: 0
+    totalBagsOpened: 0
+    totalCommons: 0
+    totalRares: 0
+    totalUltraRares: 0
+--- !u!114 &629296791496680187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327967596330766620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b5559b5fbee4e64e9a1f28a6a868610, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Flipit.Shop::Flipit.Shop.ShopUIController
+  shopManager: {fileID: 5427330924901675647}
+  inputActions: {fileID: -944628639613478452, guid: ba055284f04f92e4c96f938cc678bad8, type: 3}
+  selectActionName: Select
+  cancelActionName: Cancel
+  navigateActionName: Navigate
+  confirmationPanel: {fileID: 0}
+  resultsPanel: {fileID: 0}
+--- !u!114 &5107845233302582980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327967596330766620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844a78b939d19d04ea0db978514d0ab7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Flipit.Shop::Flipit.Shop.ShopVisuals
+  shopManager: {fileID: 5427330924901675647}
+  uiController: {fileID: 629296791496680187}
+--- !u!114 &1149061078798964681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327967596330766620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7e9984a84df874bb4639cf56e8752d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Flipit.Shop::Flipit.Shop.ShopInitializer
+  shopManager: {fileID: 5427330924901675647}
+  uiController: {fileID: 629296791496680187}

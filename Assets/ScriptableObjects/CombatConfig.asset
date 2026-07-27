@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0966a7f698918044e940bb7537925d38, type: 3}
+  m_Name: CombatConfig
+  m_EditorClassIdentifier: Assembly-CSharp::CombatConfig
+  maxFichasApuesta: 5
+  minFichasApuesta: 1
+  velocidadMira: 3
+  velocidadBarraFuerza: 2.5
+  velocidadCirculoPrecision: 3
+  radioMinimoPrecision: 0.05
+  radioMaximoPrecision: 1
+  npcFuerzaMin: 0.4
+  npcFuerzaMax: 0.9
+  npcDispersionMin: 0.2
+  npcDispersionMax: 0.7
+  desgastePorLanzamiento: 5
+  xpPorFichaGanada: 10
+  desgasteMaximo: 100
