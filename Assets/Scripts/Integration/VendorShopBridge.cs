@@ -16,7 +16,7 @@ using Flipit.Core;
 public class VendorShopBridge : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("Root GameObject of the Shop system (contains ShopManager, ShopUIController, ShopVisuals)")]
+    [Tooltip("Root GameObject of the Shop system (contains ShopManager, ShopUIController)")]
     [SerializeField] private GameObject _shopSystemGO;
 
     [Tooltip("Reference to ShopUIController for exit event subscription")]

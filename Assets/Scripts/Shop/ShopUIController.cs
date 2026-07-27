@@ -218,6 +218,45 @@ namespace Flipit.Shop
             OnExitShop?.Invoke();
         }
 
+        /// <summary>
+        /// Called from UI button click. Selects a bag and shows confirmation.
+        /// </summary>
+        public void SelectBagFromUI(int row, int col)
+        {
+            if (isConfirmationOpen || isResultsOpen) return;
+            currentRow = row;
+            currentColumn = col;
+            OnCursorMoved?.Invoke(currentRow, currentColumn);
+            ShowConfirmation();
+        }
+
+        /// <summary>
+        /// Called from UI button click. Confirms the purchase.
+        /// </summary>
+        public void ConfirmPurchaseFromUI()
+        {
+            if (!isConfirmationOpen) return;
+            ConfirmPurchase();
+        }
+
+        /// <summary>
+        /// Called from UI button click. Cancels the confirmation.
+        /// </summary>
+        public void CancelConfirmationFromUI()
+        {
+            if (!isConfirmationOpen) return;
+            CloseConfirmation();
+        }
+
+        /// <summary>
+        /// Called from UI button click. Closes the results panel.
+        /// </summary>
+        public void CloseResultsFromUI()
+        {
+            if (!isResultsOpen) return;
+            CloseResults();
+        }
+
         public void ResetCursor()
         {
             currentRow = 0;
