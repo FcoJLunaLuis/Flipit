@@ -498,67 +498,15 @@ namespace Flipit.CityTerrain
         }
 
         /// <summary>
-        /// Stage 3: NPC Placement — places vendors, challengers, and surprise encounters.
+        /// Stage 3: NPC Placement — places challengers and surprise encounters.
+        /// Vendors are not spawned here — NPC_Tendero is created in CreateSpecialBuildings().
         /// </summary>
         public bool ExecuteStage3_NPCPlacement()
         {
             var counts = new Dictionary<string, int>();
 
-            // Place vendors
-            var vendorResult = NPCPlacer.PlaceVendors(_grid, _rng, _config.VendorCount, _config.StreetInterval);
-            for (int i = 0; i < vendorResult.PlacedCells.Count; i++)
-            {
-                CellData cell = vendorResult.PlacedCells[i];
-                Vector3 worldPos = cell.WorldPosition(_config.CellSize);
-
-                GameObject npcGO = GeometryFactory.CreateNPCCapsule(worldPos, _config.VendorColor, $"Vendor_{i}", _npcsParent);
-
-                // Add NPC_Interactable component and assign dialogue data
-                var interactable = npcGO.AddComponent<NPC_Interactable>();
-                if (_config.VendorDialogues != null && _config.VendorDialogues.Length > 0)
-                {
-                    DialogueData dialogue = _config.VendorDialogues[i % _config.VendorDialogues.Length];
-                    SetPrivateField(interactable, "dialogueData", dialogue);
-                }
-
-                // Add CharacterSilhouette to vendor capsule mesh
-                var vendorMeshRenderer = npcGO.GetComponentInChildren<MeshRenderer>();
-                if (vendorMeshRenderer != null)
-                {
-                    var vendorSilhouette = vendorMeshRenderer.gameObject.AddComponent<CharacterSilhouette>();
-                    SetPrivateField(vendorSilhouette, "_silhouetteColor", new Color(1f, 0.9f, 0f, 0.6f));
-                }
-
-                // Create world-space label for vendor
-                var vendorLabelGO = new GameObject("VendorLabel");
-                vendorLabelGO.transform.SetParent(npcGO.transform);
-                vendorLabelGO.transform.localPosition = new Vector3(0f, 1.8f, 0f);
-                vendorLabelGO.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-
-                var vendorLabelCanvas = vendorLabelGO.AddComponent<Canvas>();
-                vendorLabelCanvas.renderMode = RenderMode.WorldSpace;
-                var vendorLabelRect = vendorLabelGO.GetComponent<RectTransform>();
-                vendorLabelRect.sizeDelta = new Vector2(200f, 50f);
-
-                var vendorLabelTextGO = new GameObject("Text");
-                vendorLabelTextGO.transform.SetParent(vendorLabelGO.transform);
-                vendorLabelTextGO.transform.localPosition = Vector3.zero;
-                vendorLabelTextGO.transform.localScale = Vector3.one;
-                var vendorLabelTMP = vendorLabelTextGO.AddComponent<TextMeshProUGUI>();
-                vendorLabelTMP.text = "Vendedor";
-                vendorLabelTMP.fontSize = 24;
-                vendorLabelTMP.color = Color.yellow;
-                vendorLabelTMP.alignment = TextAlignmentOptions.Center;
-                vendorLabelTMP.fontStyle = FontStyles.Bold;
-                vendorLabelTMP.enableWordWrapping = false;
-                vendorLabelTMP.overflowMode = TextOverflowModes.Overflow;
-                var vendorLabelTextRect = vendorLabelTextGO.GetComponent<RectTransform>();
-                vendorLabelTextRect.sizeDelta = new Vector2(200f, 50f);
-                vendorLabelTextRect.anchoredPosition = Vector2.zero;
-
-                vendorLabelGO.AddComponent<Billboard>();
-            }
-            counts["Vendors"] = vendorResult.ActualCount;
+            // Vendors removed — NPC_Tendero (shop) is created as a special building NPC
+            counts["Vendors"] = 0;
 
             // Place challengers
             var challengerResult = NPCPlacer.PlaceChallengers(_grid, _rng, _config.ChallengerCount, _path);

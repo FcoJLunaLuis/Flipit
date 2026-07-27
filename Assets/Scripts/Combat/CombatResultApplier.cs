@@ -1,8 +1,17 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
 /// Aplica los resultados del combate al álbum del jugador.
-/// Agrega fichas ganadas, aplica XP a la ficha lanzadora y calcula desgaste.
+/// 
+/// Lógica de ownership:
+/// - Fichas ganadas por el jugador que eran del NPC → agregar al álbum (nuevas adquisiciones)
+/// - Fichas ganadas por el NPC que eran del jugador → remover del álbum (pérdidas)
+/// - Fichas ganadas por el jugador que eran suyas → ya están en el álbum (no hacer nada)
+/// - Fichas ganadas por el NPC que eran suyas → nunca estuvieron en el álbum (no hacer nada)
+/// 
+/// También aplica XP a la ficha lanzadora y calcula desgaste.
 /// </summary>
 public static class CombatResultApplier
 {
@@ -16,28 +25,42 @@ public static class CombatResultApplier
     {
         var summary = new CombatSummaryData();
 
-        // Fichas ganadas por el jugador
-        summary.FichasGanadas = combatData.FichasGanadasJugador;
-        summary.FichasPerdidasAlNPC = combatData.FichasGanadasNPC;
+        // Obtener sets de templateId para comparación rápida
+        var idsApostadasJugador = new HashSet<int>(
+            combatData.FichasApostadasJugador.Select(f => f.templateId));
+        var idsApostadasNPC = new HashSet<int>(
+            combatData.FichasApostadasNPC.Select(f => f.templateId));
 
-        // Agregar fichas ganadas al álbum
-        foreach (var ficha in combatData.FichasGanadasJugador)
+        // Fichas que el jugador ganó y que eran del NPC → agregar al álbum
+        var fichasNuevasParaJugador = combatData.FichasGanadasJugador
+            .Where(f => idsApostadasNPC.Contains(f.templateId))
+            .ToList();
+
+        // Fichas que el NPC ganó y que eran del jugador → remover del álbum
+        var fichasPerdidasPorJugador = combatData.FichasGanadasNPC
+            .Where(f => idsApostadasJugador.Contains(f.templateId))
+            .ToList();
+
+        // Aplicar al álbum
+        foreach (var ficha in fichasNuevasParaJugador)
         {
             album.AgregarFicha(ficha);
         }
 
-        // Remover fichas perdidas del álbum (las que ganó el NPC eran del jugador)
-        foreach (var ficha in combatData.FichasGanadasNPC)
+        foreach (var ficha in fichasPerdidasPorJugador)
         {
-            // Solo remover si era ficha del jugador originalmente
             album.RemoverFicha(ficha.templateId);
         }
+
+        // Preparar summary para la UI
+        summary.FichasGanadas = fichasNuevasParaJugador;
+        summary.FichasPerdidasAlNPC = fichasPerdidasPorJugador;
 
         // Aplicar XP a la ficha lanzadora
         var lanzadora = combatData.FichaLanzadoraJugador;
         if (lanzadora != null)
         {
-            float xpGanada = combatData.FichasGanadasJugador.Count * config.xpPorFichaGanada;
+            float xpGanada = fichasNuevasParaJugador.Count * config.xpPorFichaGanada;
             lanzadora.experienciaDeRango += xpGanada;
             summary.XPGanada = xpGanada;
 
@@ -57,9 +80,9 @@ public static class CombatResultApplier
         }
 
         summary.LanzamientosRealizados = combatData.LanzamientosJugador;
-        summary.JugadorGano = combatData.FichasGanadasJugador.Count > combatData.FichasGanadasNPC.Count;
+        summary.JugadorGano = fichasNuevasParaJugador.Count > fichasPerdidasPorJugador.Count;
 
-        Debug.Log($"[CombatResultApplier] Resultados aplicados. Ganadas:{summary.FichasGanadas.Count} XP:{summary.XPGanada} Desgaste:{summary.DesgasteAplicado} Rota:{summary.FichaSeRompio}");
+        Debug.Log($"[CombatResultApplier] Resultados aplicados. Ganadas del NPC:{fichasNuevasParaJugador.Count} Perdidas al NPC:{fichasPerdidasPorJugador.Count} XP:{summary.XPGanada} Desgaste:{summary.DesgasteAplicado} Rota:{summary.FichaSeRompio}");
 
         return summary;
     }
