@@ -5,6 +5,7 @@
         "Flipit.Dialogue",
         "Flipit.Combat",
         "Flipit.CityTerrain",
+        "Flipit.Data",
         "Unity.InputSystem",
         "Unity.TextMeshPro",
         "Unity.ugui"

@@ -11,5 +11,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: 4ee1a8850f08bb549bd1ba7981beeb11
+  - enabled: 1
+    path: Assets/Scenes/CombatScene.unity
+    guid: fee0316c458bcf64eb73fc839283ac7b
+  - enabled: 1
+    path: Assets/Scenes/BettingAlbumIntegrationTestScene.unity
+    guid: 2b84032541500c54e9e98b8fce43bcd4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

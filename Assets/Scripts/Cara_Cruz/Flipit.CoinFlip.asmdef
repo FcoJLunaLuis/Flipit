@@ -1,11 +1,8 @@
 {
-    "name": "Flipit.Combat",
-    "rootNamespace": "Flipit.Combat",
+    "name": "Flipit.CoinFlip",
+    "rootNamespace": "",
     "references": [
-        "Flipit.Dialogue",
-        "Flipit.Data",
         "Flipit.Core",
-        "Flipit.CoinFlip",
         "Unity.InputSystem",
         "Unity.TextMeshPro",
         "Unity.ugui"
