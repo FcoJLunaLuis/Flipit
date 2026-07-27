@@ -1,6 +1,6 @@
 # Flipit
 
-**Un RPG isometrico donde coleccionas fichas, las apuestas y las volteas.**
+**Un videojuego isometrico donde coleccionas fichas, las apuestas y las volteas.**
 
 > Hackathon Kiro 2026 — Categoria Videojuegos
 
@@ -14,7 +14,7 @@
 
 ## Sobre el Juego
 
-Flipit es un RPG isometrico en tercera persona donde un niño recorre su ciudad desde la escuela hasta su casa. En el camino puede hablar con NPCs, comprar en tiendas, coleccionar fichas (flipits) y apostarlas en combates contra retadores callejeros.
+Flipit es un videojuego isometrico en tercera persona donde un niño recorre su ciudad desde la escuela hasta su casa. En el camino puede hablar con NPCs, comprar en tiendas, coleccionar fichas (flipits) y apostarlas en combates contra retadores callejeros.
 
 El mundo es persistente y cada dia trae pequenos cambios que mantienen la experiencia fresca.
 
