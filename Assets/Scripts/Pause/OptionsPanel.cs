@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using Flipit.Core;
 
 /// <summary>
 /// Panel de opciones/configuración del juego (placeholder).
@@ -81,7 +82,9 @@ public class OptionsPanel : MonoBehaviour
         {
             musicVolumeSlider.minValue = 0;
             musicVolumeSlider.maxValue = 100;
-            musicVolumeSlider.value = 80;
+            musicVolumeSlider.value = Audio_Manager.Instance != null
+                ? Audio_Manager.Instance.MasterVolume * 100f
+                : 80;
         }
 
         if (sfxVolumeSlider != null)
@@ -121,7 +124,8 @@ public class OptionsPanel : MonoBehaviour
     private void OnMusicVolumeChanged(float value)
     {
         Debug.Log($"[Opciones] Volumen Música: {value}");
-        // TODO: Conectar con AudioMixer.SetFloat("MusicVolume", ConvertToDecibels(value));
+        if (Audio_Manager.Instance != null)
+            Audio_Manager.Instance.MasterVolume = value / 100f;
     }
 
     private void OnSFXVolumeChanged(float value)

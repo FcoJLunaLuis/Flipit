@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 /// <summary>
@@ -159,7 +160,8 @@ public class PauseMenuUI : MonoBehaviour
                 onConfirm: () =>
                 {
                     Debug.Log("[PauseMenuUI] Confirmado: Volver al menú principal.");
-                    // TODO: SceneManager.LoadScene("MainMenu");
+                    Time.timeScale = 1f;
+                    SceneManager.LoadScene("TitleScene");
                 },
                 onCancel: () =>
                 {

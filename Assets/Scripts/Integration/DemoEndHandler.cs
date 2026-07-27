@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Flipit.Combat;
+using Flipit.Core;
 
 /// <summary>
 /// Listens for the "level_complete" event (fired by House_Trigger when player arrives home).
@@ -14,10 +15,14 @@ using Flipit.Combat;
 public class DemoEndHandler : MonoBehaviour
 {
     [Header("Configuration")]
-    [SerializeField] private string _thankYouMessage = "¡Gracias por jugar!\n\nFin de la Demo";
+    [SerializeField] private string _thankYouMessage = "¡Gracias por jugar!\n\nFin de la Demo\n\nCreada para hackaton kiro 2026";
     [SerializeField] private float _fadeInDuration = 1f;
     [SerializeField] private float _delayBeforeButton = 5f;
     [SerializeField] private string _titleSceneName = "TitleScene";
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip _endMusic;
+    [SerializeField, Range(0f, 1f)] private float _endMusicVolume = 0.7f;
 
     private bool _triggered;
 
@@ -36,6 +41,10 @@ public class DemoEndHandler : MonoBehaviour
         if (eventId != "level_complete") return;
         if (_triggered) return;
         _triggered = true;
+
+        // Play end/credits music
+        if (Audio_Manager.Instance != null && _endMusic != null)
+            Audio_Manager.Instance.PlayMusic(_endMusic, _endMusicVolume);
 
         StartCoroutine(DemoEndSequence());
     }
