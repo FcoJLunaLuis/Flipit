@@ -1,0 +1,3 @@
+El prefab AlbumTestTrigger sirve para rellenar el album
+con datos de prueba, puede ser eliminado de la jerarquia
+una vez que se vaya a integrar con lo demas

@@ -1,0 +1,20 @@
+{
+    "name": "Flipit.DailyCycle",
+    "rootNamespace": "Flipit.DailyCycle",
+    "references": [
+        "Flipit.Dialogue",
+        "Flipit.Combat",
+        "Flipit.CityTerrain",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

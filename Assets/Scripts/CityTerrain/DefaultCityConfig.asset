@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aabda2d6c763a9841864318a7a7dc111, type: 3}
+  m_Name: DefaultCityConfig
+  m_EditorClassIdentifier: Flipit.CityTerrain::Flipit.CityTerrain.City_Config
+  _gridWidth: 31
+  _gridDepth: 31
+  _cellSize: 4
+  _streetInterval: 4
+  _randomSeed: 0
+  _playerMoveSpeed: 5
+  _cameraOrthoSize: 12
+  _cameraFollowOffset: 15
+  _cameraSmoothSpeed: 5
+  _buildingHeightMin: 6
+  _buildingHeightMax: 12
+  _buildingColorPalette:
+  - {r: 0.7, g: 0.7, b: 0.8, a: 1}
+  - {r: 0.85, g: 0.75, b: 0.65, a: 1}
+  - {r: 0.6, g: 0.6, b: 0.6, a: 1}
+  - {r: 0.8, g: 0.85, b: 0.75, a: 1}
+  - {r: 0.75, g: 0.65, b: 0.6, a: 1}
+  - {r: 0.65, g: 0.75, b: 0.8, a: 1}
+  _cellConversionPercent: 0.2
+  _treeDensitySidewalk: 0.33
+  _treeDensityPark: 0.5
+  _carDensity: 0.08
+  _benchDensity: 1
+  _trashCanDensity: 0.125
+  _vendorCount: 3
+  _challengerCount: 4
+  _surpriseEncounterCount: 3
+  _vendorDialogues:
+  - {fileID: 11400000, guid: 307588827ea1ab341a585cfbc85342c3, type: 2}
+  - {fileID: 11400000, guid: b6593a0616d2f1e47aa21a56554977bb, type: 2}
+  - {fileID: 11400000, guid: 65c4a2b7598329245a82fd6010af433c, type: 2}
+  _challengerDialogues:
+  - {fileID: 11400000, guid: 15acd597c9c13dd49a48f4d8b1e94185, type: 2}
+  - {fileID: 11400000, guid: 1a29aba1f57cef5468d20171f10a5a24, type: 2}
+  - {fileID: 11400000, guid: 27aca5b9e6477e44d8e29b590d6aaa72, type: 2}
+  _challengerEncounterConfigs: []
+  _forcedEncounterDialogue: {fileID: 11400000, guid: 6512a3099199ecd4eafa9149113e1fb2, type: 2}
+  _combatSceneName: CombatScene
+  _transparencyAlpha: 0.3
+  _fadeDuration: 0.2
+  _groundPlaneColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  _streetColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
+  _sidewalkColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+  _schoolColor: {r: 0, g: 0, b: 1, a: 1}
+  _houseColor: {r: 0, g: 1, b: 0, a: 1}
+  _vendorColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _challengerColor: {r: 1, g: 0, b: 0, a: 1}
+  _treeTrunkColor: {r: 0.4, g: 0.25, b: 0.1, a: 1}
+  _treeCanopyColor: {r: 0.2, g: 0.7, b: 0.2, a: 1}

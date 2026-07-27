@@ -1,0 +1,22 @@
+{
+    "name": "Flipit.Combat",
+    "rootNamespace": "Flipit.Combat",
+    "references": [
+        "Flipit.Dialogue",
+        "Flipit.Core",
+        "Flipit.Data",
+        "Flipit.CoinFlip",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "Unity.ugui"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

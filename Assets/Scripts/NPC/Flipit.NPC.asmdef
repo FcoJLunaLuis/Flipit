@@ -1,0 +1,19 @@
+{
+    "name": "Flipit.NPC",
+    "rootNamespace": "Flipit.NPC",
+    "references": [
+        "Flipit.Core",
+        "Flipit.Data",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

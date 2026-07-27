@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "unityMCP": {
+      "url": "http://127.0.0.1:8080/mcp",
+      "type": "http",
+      "disabled": false,
+      "autoApprove": [
+        "read_console",
+        "validate_script",
+        "run_tests",
+        "create_script",
+        "execute_menu_item",
+        "manage_scene",
+        "manage_camera",
+        "execute_code",
+        "manage_editor",
+        "refresh_unity",
+        "manage_texture",
+        "find_gameobjects",
+        "manage_asset",
+        "manage_gameobject",
+        "manage_shader",
+        "manage_script",
+        "manage_script",
+        "script_apply_edits",
+        "apply_text_edits"
+      ]
+    }
+  }
+}
